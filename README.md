@@ -1,8 +1,4 @@
-# Keypad-Settings
-Hello, this program was made for user of keypad device to stting it.
-# What is Keypad?
-Keypad is device which can help you communicate with computer. By this program you can set on keypad same activities.
-It can be:
-Opening files and web-sites
-Typing the text
-Pressing combination of keys
+## What is it?
+This is the program that set actions for keypad. Keypad is USB device which can execute some action to help user.
+## Some notes about
+Device used to work via virtual COM port. So it has some unfinished controls which was made to set the port up. So now it isn't neccesery so I'm going to deleate this in the next commit.

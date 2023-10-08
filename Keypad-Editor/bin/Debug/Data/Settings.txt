@@ -1,0 +1,21 @@
+1 open https://cipr.ru/   
+2 none 
+3  
+4 none 
+5 none 
+6 none 
+7 type best_email_in_the_world@gmail.com
+8 none 
+9 none 
+10 none 
+11 none 
+12 none 
+13 pressCombimation LeftCtrl|K 100 LeftCtrl|C
+14 none 
+15 none 
+16 none 
+17 none 
+18 type 2
+19 pressCombimation 
+20 none 
+21 type 1

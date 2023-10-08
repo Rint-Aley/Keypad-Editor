@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0717A6A0-B44E-421B-8D85-6215419260EC}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>WPF_test</RootNamespace>
-    <AssemblyName>WPF test</AssemblyName>
+    <RootNamespace>Keypad_Editor</RootNamespace>
+    <AssemblyName>Keypad-Editor</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -116,32 +116,12 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\close_window.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Close2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\BackImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Keypad.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Keypad.ico" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Resources\Close2.png" />
+    <Resource Include="Resources\close_window.png" />
     <Resource Include="Resources\gear.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Settings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\RussiaFlag.png" />
-    <Resource Include="Resources\USAFlag.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\UKFlag.png" />
+    <Resource Include="Resources\Keypad.ico" />
+    <Resource Include="Resources\Keypad.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
