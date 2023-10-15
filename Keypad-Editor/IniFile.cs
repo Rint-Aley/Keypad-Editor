@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
     public class IniFile
     {

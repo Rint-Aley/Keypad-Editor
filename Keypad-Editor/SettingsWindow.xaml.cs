@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
     /// <summary>
     /// Логика взаимодействия для SettingsWindow.xaml
@@ -23,7 +23,7 @@ namespace WPF_test
         public SettingsWindow()
         {
             InitializeComponent();
-            Localizate();
+            //Localizate();
 
             //set current settings
             IniFile iniFile = new IniFile("Data\\Config.ini");
@@ -106,7 +106,7 @@ namespace WPF_test
                 iniFile.Write("Language", "EN", "ApplicationSettings");
                 App.Language = "EN";
             }
-            Localizate();
+            //Localizate();
         }
     }
 }

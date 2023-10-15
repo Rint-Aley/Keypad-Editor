@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Forms = System.Windows.Forms;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
     /// <summary>
     /// Логика взаимодействия для App.xaml
@@ -17,7 +17,6 @@ namespace WPF_test
     public partial class App : Application
     {
         public Forms.NotifyIcon notifyIcon = new Forms.NotifyIcon();
-        FileEditor settingsEditor = new FileEditor();
 
         public static string Language { get; set; }
         public static int NumberOfKeys { get; set; }
@@ -39,8 +38,8 @@ namespace WPF_test
 
 
 
-            if (!File.Exists(settingsEditor.path))
-                settingsEditor.CreateFile(NumberOfKeys);
+            if (!File.Exists(FileEditor.path))
+                FileEditor.CreateFile(NumberOfKeys);
             if (!File.Exists("Data\\port.txt"))
                 File.Create("Data\\port.txt").Close();
 
@@ -50,10 +49,9 @@ namespace WPF_test
             notifyIcon.Icon = new Icon("Data\\Keypad.ico");
             notifyIcon.Visible = true;
             notifyIcon.ContextMenuStrip = menu;
-            menu.BackColor = Color.FromArgb(54, 57, 63);
-            menu.Items.Add("Показать окно", null, OnButton1Clicked);
-            menu.Items.Add("Скрыть окно", null, OnButton2Clicked);
-            menu.Items.Add("Выйти", null, CloseClicked);
+            menu.Items.Add("Show window", null, OnButton1Clicked);
+            menu.Items.Add("Hide window", null, OnButton2Clicked);
+            menu.Items.Add("Exit", null, CloseClicked);
 
             notifyIcon.Click += NotifyIcon_Click;
 

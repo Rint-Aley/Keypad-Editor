@@ -23,7 +23,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.IO.Ports;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -52,15 +52,12 @@ namespace WPF_test
         string[] hotkeys = new string[1];
         int[] delays = new int[1];
         ///Объявление переменных
-        FileEditor settingsEditor = new FileEditor();
         
 
         public MainWindow()
         {
             InitializeComponent();
-            Localizate();
-            UpdateListButton_Click(UpdateListButton, null);
-
+            //Localizate();
             FillingInArrays();
         }
 
@@ -132,7 +129,7 @@ namespace WPF_test
         {
             for (short i = 0; i < App.NumberOfKeys; i++)
             {
-                string[] kommands = settingsEditor.readLine(i + 1).Split(' ');
+                string[] kommands = FileEditor.readLine(i + 1).Split(' ');
                 if (kommands.Length > 1) activityInFile[i] = kommands[1];
                 else activityInFile[i] = "None";
                 if (kommands.Length > 2)
@@ -454,10 +451,10 @@ namespace WPF_test
             {
                 if (activityNew[i] == "combination")
                 {
-                    settingsEditor.ChangeText(i + 1, "hotKey", parametrNew[i]);
+                    FileEditor.ChangeText(i + 1, "hotKey", parametrNew[i]);
                 }
                 else
-                    settingsEditor.ChangeText(i + 1, activityNew[i], parametrNew[i]);
+                    FileEditor.ChangeText(i + 1, activityNew[i], parametrNew[i]);
             }
 
             FillingInArrays();
@@ -589,26 +586,6 @@ namespace WPF_test
             sw.Show();
         }
 
-        //Port settings
-        
-        private void UpdateListButton_Click(object sender, RoutedEventArgs e)
-        {
-            SerialPort serialPort = new SerialPort();
-            foreach(var portName in SerialPort.GetPortNames())
-            {
-                ListOfPorts.Items.Add(portName);
-            }
-        }
-
-        private void AutomaticSearchButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ApplyPortButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         //Нажатие клавиш в форме
         private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

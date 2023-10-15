@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
     /// <summary>
     /// Логика взаимодействия для MessageBox.xaml

@@ -1,9 +1,9 @@
-﻿<Window x:Class="WPF_test.MainWindow"
+﻿<Window x:Class="Keypad_Editor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPF_test"
+        xmlns:local="clr-namespace:Keypad_Editor"
         mc:Ignorable="d"
         MinHeight="450" MinWidth="800"
         Height="450" Width="800"
@@ -650,21 +650,6 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-
-            <StackPanel HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Margin="5">
-                <TextBlock x:Name="ChoosingPort" Text="Choosing Port"
-                           Foreground="{StaticResource TextColor}"/>
-                <ComboBox x:Name="ListOfPorts" Width="100" Height="20" Margin="0 5"/>
-                <Button x:Name="UpdateListButton" Click="UpdateListButton_Click"
-                        Height="20" Content="Update list"/>
-                <Button x:Name="AutomaticSearchButton" Click="AutomaticSearchButton_Click"
-                        Height="20" Content="Automatic search" Margin="0 5"/>
-                <Button x:Name="ApplyPortButton" Click="ApplyPortButton_Click"
-                        Height="20" Content="Apply"/>
-            </StackPanel>
-            
 
 
             <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Style="{StaticResource ChangeMod}"/>

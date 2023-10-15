@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WPF_test
+namespace Keypad_Editor
 {
-    internal class FileEditor
+    public static class FileEditor
     {
-        public string path = System.IO.Path.GetFullPath("Data\\Settings.txt"); //Расположение фалйа с настройками
+        public static string path = System.IO.Path.GetFullPath("Data\\Settings.txt"); //Расположение фалйа с настройками
 
         //Создаёт файл с укзанным в переменной количеством строчек
-        public void CreateFile(int numOfLine)
+        public static void CreateFile(int numOfLine)
         {
             using (StreamWriter sw = File.CreateText(path))
             {
@@ -24,7 +24,7 @@ namespace WPF_test
         }
 
         //Читает конкретную строчку в фале
-        public string readLine(int numStr)
+        public static string readLine(int numStr)
         {
             string line = "";
             using (StreamReader sw = new StreamReader(path))
@@ -39,7 +39,7 @@ namespace WPF_test
         }
 
         //Заменяет выбранный номер строки на новое значение
-        public void ChangeText(int numStr, string activity, string parameter)
+        public static void ChangeText(int numStr, string activity, string parameter)
         {
             string newText = string.Empty;
             string lastText = readLine(numStr);
