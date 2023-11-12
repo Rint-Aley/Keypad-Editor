@@ -1,28 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Windows.Controls.Primitives;
 using System.Threading;
-using System.Diagnostics;
-using System.Windows.Media.Animation;
-using Microsoft.Win32;
 using System.IO;
-using System.IO.Ports;
-
 namespace Keypad_Editor
 {
     /// <summary>
@@ -33,6 +16,7 @@ namespace Keypad_Editor
     public partial class MainWindow : System.Windows.Window
     {
 
+        MainWindowLogic logic;
         ///Объявление переменных
         private short selectedKey = 0, lastSelectedKey = 0;
         string DontSelectedAnyButtons;
@@ -56,9 +40,10 @@ namespace Keypad_Editor
 
         public MainWindow()
         {
+            logic = new MainWindowLogic(this);
             InitializeComponent();
             //Localizate();
-            FillingInArrays();
+            logic.ReadDataFromFile(0);
         }
 
         public void Localizate()
@@ -96,15 +81,18 @@ namespace Keypad_Editor
             DontSelectedAnyButtons = iniFile.Read("ErrorKeyIsNotSelected", "DeviceBlock");
         }
 
-        //Window
         
-        //Кнопка закрытия
+        /// <summary>
+        /// Hides window.
+        /// </summary>
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            Hide();
+            Close();
         }
 
-        //Перемещение окна
+        /// <summary>
+        /// Changes window position.
+        /// </summary>
         private void TopMenu_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -113,197 +101,32 @@ namespace Keypad_Editor
             }
         }
 
-        //Window.End
 
-        //WorkerPart
-
+        /// <summary>
+        /// Changes subwindows
+        /// </summary>
         private void BigDevice_Click(object sender, RoutedEventArgs e)
         {
             BigDeviceGrid.Visibility = Visibility.Hidden;
             MainWindowGrid.Visibility = Visibility.Visible;
-            //Анимация смены
+            //Animation
         }
 
-        //Заполняет массивы
-        private void FillingInArrays()
-        {
-            for (short i = 0; i < App.NumberOfKeys; i++)
-            {
-                string[] kommands = FileEditor.readLine(i + 1).Split(' ');
-                if (kommands.Length > 1) activityInFile[i] = kommands[1];
-                else activityInFile[i] = "None";
-                if (kommands.Length > 2)
-                {
-                    if (activityInFile[i] == "type")
-                    {
-                        int a = kommands.Length; //сколько слов в массиве
-                        string text = String.Empty; // Финальный параметр
-                        for (int j = 2; j < a; j++) text += kommands[j] + " "; //Пока не переберёт все слова
-                        parametrInFile[i] = text.Remove(text.Length - 1);
-                    }
-                    else if (activityInFile[i] == "pressCombimation")
-                    {
-                        int a = kommands.Length; //сколько слов в массиве
-                        string text = String.Empty; // Финальный параметр
-                        for (int j = 2; j < a; j++) text += kommands[j] + " "; //Пока не переберёт все слова
-                        parametrInFile[i] = text.Remove(text.Length - 1);
-                    }
-                    else if (activityInFile[i] == "open")
-                    {
-                        int a = kommands.Length; //сколько слов в массиве
-                        string text = String.Empty; // Финальный параметр
-                        for (int j = 2; j < a; j++) text += kommands[j] + " "; //Пока не переберёт все слова
-                        parametrInFile[i] = text;
-
-                    }
-                }
-                else parametrInFile[i] = "";
-            }
-            Array.Copy(activityInFile, activityNew, App.NumberOfKeys);
-            Array.Copy(parametrInFile, parametrNew, App.NumberOfKeys);
-
-        }
-
-        //Переводит значения массивов к текущим
+        /// <summary>
+        /// Sets commands to last saved state.
+        /// </summary>
         private void ToCurrentSettings_Click(object sender, RoutedEventArgs e)
         {
-            // Изменяет значяение массивов
-            for (short i = 0; i < App.NumberOfKeys; i++)
-            {
-                activityNew[i] = activityInFile[i];
-                parametrNew[i] = parametrInFile[i];
-            }
-            //Изменяет текущее окно
-            if (selectedKey != 0) changedSelectedKey();
+            logic.retunToOldSettings();
         }
 
-        //Нажатите на кнопку устройства
+        /// <summary>
+        /// Handles perssing to button on device.
+        /// </summary>
         private void Key_Click(object sender, RoutedEventArgs e)
         {
             var selectedKeyTag = ((ToggleButton)sender).Tag;
-            selectedKey = Convert.ToInt16(selectedKeyTag);
-            if (lastSelectedKey != selectedKey) changedSelectedKey(); //При повторном нажатии на одну и ту же кнопку ничего не произойдёт
-            lastSelectedKey = selectedKey;
-        }
-
-        //Очиска предыдущих значений
-        private void ClearFillingItems()
-        {
-            selectedActivity = String.Empty;
-            PathToFileOrWebsite.Text = String.Empty;
-            TextToType.Text = String.Empty;
-
-            KeysTextBlock.Text = String.Empty;
-            DelayTextBlock.Text = String.Empty;
-            selectedHotkey = 1;
-            Array.Resize(ref hotkeys, 1);
-            Array.Resize(ref delays, 1);
-            hotkeys[0] = String.Empty;
-            delays[0] = 0;
-            NumberOfGroupTextBlock.Text = "1";
-
-            DeleateGroupCombnations.IsEnabled = false;
-            DelayTextBlock.IsEnabled = false;
-            NextGroupKeys.IsEnabled = false;
-            LastGroupKeys.IsEnabled = false;
-        }
-
-        //Обрабатывает смену настраиваемой клавиши
-        void changedSelectedKey()
-        {
-            //Перезапись настроек, когда мы сменили настраиваемую клавишу и у нас включены закладки
-            if ((lastSelectedKey != 0) & cache & (lastSelectedKey != selectedKey)) WriteNewValues();
-
-            ClearFillingItems();
-
-            //Ставит значения параметров из файла
-            switch (activityNew[selectedKey - 1])
-            {
-                case "open":
-                    MovingButton_Click(open, null);
-                    PathToFileOrWebsite.Text = parametrNew[selectedKey - 1];
-                    break;
-                case "type":
-                    MovingButton_Click(type, null);
-                    TextToType.Text = parametrNew[selectedKey - 1];
-                    break;
-                case "pressCombimation":
-                    MovingButton_Click(pressCombimation, null);
-                    //Параметры комбинации клавиш
-                    if (parametrNew[selectedKey - 1] != "" & parametrNew[selectedKey - 1] != null)
-                    {
-                        string[] parametr = parametrNew[selectedKey - 1].Split(' ');
-                        //Заполнение массивов
-                        int numberOfCombinationInt = (parametr.Length + 1) / 2;
-                        Array.Resize(ref hotkeys, numberOfCombinationInt);
-                        Array.Resize(ref delays, numberOfCombinationInt);
-                        for(int i = 0; i < numberOfCombinationInt; i++)
-                        {
-                            hotkeys[i] = parametr[i*2].Replace('|', ' ') + " ";
-                            if(i+1 != numberOfCombinationInt)
-                                delays[i] = Convert.ToInt32(parametr[i*2+1]);
-                        }
-                        if(numberOfCombinationInt != 1)
-                        {
-                            DeleateGroupCombnations.IsEnabled = true;
-                            DelayTextBlock.IsEnabled = true;
-                            NextGroupKeys.IsEnabled = true;
-                            LastGroupKeys.IsEnabled = true;
-                        }
-                        //Визуализация информации
-                        ChangeSelectedGroupHotKey(1, false);
-                    }
-                    break;
-                default:
-                    DeleteActivity();
-                    Apply.Visibility = Visibility.Hidden;
-                    break;
-            }
-            //selectedActivity нужно изменять после установки значений параметров
-            selectedActivity = activityNew[selectedKey - 1];
-        }
-
-        //Записывает значения прошлой настраиваемолй кнопки
-        void WriteNewValues()
-        {
-            activityNew[lastSelectedKey - 1] = selectedActivity;
-            switch (selectedActivity)
-            {
-                case "open":
-                    parametrNew[lastSelectedKey - 1] = PathToFileOrWebsite.Text;
-                    break;
-                case "type":
-                    parametrNew[lastSelectedKey - 1] = TextToType.Text;
-                    break;
-                case "pressCombimation":
-                    //Сохраняем текущую выделенную группу комбинаций
-                    hotkeys[selectedHotkey - 1] = KeysTextBlock.Text;
-                    try
-                    {
-                        delays[selectedHotkey - 1] = Convert.ToInt32(DelayTextBlock.Text);
-                    }
-                    catch { delays[selectedHotkey - 1] = 0; }
-                    
-                    string result = String.Empty;
-
-                    for (int i = 0; i < hotkeys.Length; i++)
-                    {
-                        //Record keys
-                        if(hotkeys[i].Length > 0)
-                            result += hotkeys[i].Replace(' ', '|').Remove(hotkeys[i].Length - 1) + " ";
-                        else
-                            result += " ";
-                        //Record delays
-                        //Если не последняя итерация цикла то
-                        if (i + 1 != hotkeys.Length)
-                            result += delays[i] + " ";
-                    }
-                    parametrNew[lastSelectedKey - 1] = result.Remove(result.Length - 1);
-                    break;
-                default:
-                    parametrNew[lastSelectedKey - 1] = String.Empty;
-                    break;
-            }
+            logic.changeKey(Convert.ToInt16(selectedKeyTag));
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
@@ -328,7 +151,7 @@ namespace Keypad_Editor
             selectedKey = 0;
             lastSelectedKey = 0;
             //Очищаем экран
-            ClearFillingItems();
+            HideControls();
             DeleteActivity();
             foreach (System.Windows.Controls.RadioButton radioButton in RadioButtonsOfDevice.Children)
             {
@@ -336,18 +159,14 @@ namespace Keypad_Editor
             }
         }
 
-
-
-        //Изменение действия
-        private void MovingButton_Click(object sender, RoutedEventArgs e)
+        private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            //selectedMove - указатель на выбранное действие
-            ToggleButton selectedMove = sender as ToggleButton;
-            Thread clearErrorTextBlock = new Thread(runTimer);
-            //Остановка потока
+            ToggleButton selectedAction = (ToggleButton)sender;
+
             if (selectedKey == 0)
             {
-                selectedMove.IsChecked = false;
+                Thread clearErrorTextBlock = new Thread(runTimer);
+                selectedAction.IsChecked = false;
                 //Вывод ошибки
                 ErrorTextBlock.Text = DontSelectedAnyButtons;
                 clearErrorTextBlock.Start();
@@ -387,10 +206,10 @@ namespace Keypad_Editor
         private async void runTimer()
         {
             await Task.Delay(2000);
-            Dispatcher.BeginInvoke(new Action(() => updateScreen()));
+            Dispatcher.BeginInvoke(new Action(() => mupdateScreen()));
         }
 
-        private void updateScreen()
+        private void mupdateScreen()
         {
             ErrorTextBlock.Text = "";
         }
@@ -421,7 +240,7 @@ namespace Keypad_Editor
                 if (PathToFileOrWebsite.Text != string.Empty)
                 {
                     openFileDialog.InitialDirectory = PathToFileOrWebsite.Text; //Открывает нужную деррикторию
-                    openFileDialog.FileName = System.IO.Path.GetFileName(PathToFileOrWebsite.Text); //Пишет в имя уже выбранный файл
+                    openFileDialog.FileName = Path.GetFileName(PathToFileOrWebsite.Text); //Пишет в имя уже выбранный файл
                 }
                 else openFileDialog.InitialDirectory = @"C:\";
                 openFileDialog.RestoreDirectory = true;

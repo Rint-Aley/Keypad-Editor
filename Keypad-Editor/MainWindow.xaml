@@ -65,7 +65,7 @@
             </Setter>
         </Style>
 
-        <!--// Кнопка назад //-->
+        <!--// Back button //-->
         <Style x:Key="Back" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource BackgroungColor}"/>
             <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
@@ -89,7 +89,7 @@
         
         
 
-        <!--// Стиль для кнопок устройства //-->
+        <!--// Device's buttons //-->
         <Style x:Key="DeviceKey" TargetType="ToggleButton">
             <EventSetter Event="Click" Handler="Key_Click"/>
             <Setter Property="Template">
@@ -116,13 +116,13 @@
 
 
 
-        <!--// Кнопка выбора действия //-->
-        <Style x:Key="MovingButton" TargetType="ToggleButton">
+        <!--// Buttons to choose action //-->
+        <Style x:Key="ActionButton" TargetType="ToggleButton">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontFamily" Value="TimesNewRoman"/>
             <Setter Property="Background" Value="{StaticResource BackgroungColor}"/>
             <Setter Property="Foreground" Value="#989a98"/>
-            <EventSetter Event="Click" Handler="MovingButton_Click"/>
+            <EventSetter Event="Click" Handler="ActionButton_Click"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
@@ -638,7 +638,7 @@
         </Grid>
         
         <!--// Стартовый экран //-->
-        <Grid x:Name="BigDeviceGrid" Visibility="Visible" Opacity="1"
+        <Grid x:Name="BigDeviceGrid" Visibility="Hidden" Opacity="1"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -671,7 +671,7 @@
         
         <!--// Основная часть //-->
         <Grid x:Name="MainWindowGrid" Grid.Row="2"
-              Visibility="Hidden" Opacity="1">
+              Visibility="Visible" Opacity="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" MinWidth="266"/>
                 <ColumnDefinition Width ="Auto"/>
@@ -848,17 +848,17 @@
 
             <!--// Меню выбора действия //-->
             <StackPanel Orientation="Vertical" Grid.Column="2" 
-                        x:Name="MoveMenu">
+                        x:Name="ActionsMenu">
 
                 <RadioButton Name="open" Content="Opening" 
-                             Style="{StaticResource MovingButton}"
-                             GroupName="Moving"/>
+                             Style="{StaticResource ActionButton}"
+                             GroupName="Action"/>
                 <RadioButton Name="type" Content="Typing"
-                             Style="{StaticResource MovingButton}"
-                             GroupName="Moving"/>
+                             Style="{StaticResource ActionButton}"
+                             GroupName="Action"/>
                 <RadioButton Name="pressCombimation" Content="Combination" 
-                             Style="{StaticResource MovingButton}"
-                             GroupName="Moving"/>
+                             Style="{StaticResource ActionButton}"
+                             GroupName="Action"/>
             </StackPanel>
 
             <!--// Открытие //-->

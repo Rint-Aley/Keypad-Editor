@@ -19,7 +19,7 @@ namespace Keypad_Editor
         public Forms.NotifyIcon notifyIcon = new Forms.NotifyIcon();
 
         public static string Language { get; set; }
-        public static int NumberOfKeys { get; set; }
+        public static ushort NumberOfKeys { get; set; }
         public static bool Cache { get; set; }
         public static short Theme { get; set; }
         public static short InitalWindow { get; set; }

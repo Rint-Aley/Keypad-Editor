@@ -9,7 +9,7 @@ namespace Keypad_Editor
 {
     public static class FileEditor
     {
-        public static string path = System.IO.Path.GetFullPath("Data\\Settings.txt"); //Расположение фалйа с настройками
+        public static string path = Path.GetFullPath("Data\\Settings.txt"); //Расположение фалйа с настройками
 
         //Создаёт файл с укзанным в переменной количеством строчек
         public static void CreateFile(int numOfLine)
