@@ -2,13 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Text.Json;
 
 namespace Keypad_Editor
 {
     public class MainWindowLogic
     {
         MainWindow Window;
-
+        
         //Fields decloration
         private short selectedKey, lastSelectedKey;
         private string[] actions = new string[] { "none", "open", "type", "pressCombination" };
@@ -218,6 +219,7 @@ namespace Keypad_Editor
             actionNew.CopyTo(actionInFile, 0);
             parametrNew.CopyTo(parametrInFile, 0);
 
+            //Writing new values
             for(short i = 0; i < App.NumberOfKeys; i++)
             {
 

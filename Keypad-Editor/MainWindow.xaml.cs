@@ -131,7 +131,7 @@ namespace Keypad_Editor
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedKey != 0) WriteNewValues();
+            if (selectedKey != 0) WriteNewValuesgit();
             if(parametrNew.SequenceEqual(parametrInFile) == false || activityNew.SequenceEqual(activityInFile) == false)
             {
                 YesNoForm yesNo = new YesNoForm("Doesn't save changes", "Are you going to save changes?");
