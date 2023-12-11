@@ -9,8 +9,11 @@
         Height="450" Width="800"
         WindowStartupLocation="CenterScreen"
         Title="Settings" Icon="Resources/Keypad.ico" PreviewKeyDown="Window_PreviewKeyDown"
-        Style="{StaticResource WindowStyle}">
-    <!--Visibility="Hidden">-->
+        Style="{StaticResource WindowStyle}" 
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
+    <!--Visibility="Hidden">  -->
     <!--// Начало стилей //-->
     <Window.Resources>
 
@@ -607,7 +610,7 @@
 
         <!--// The end of style //-->
     </Window.Resources>
-    <Grid Visibility="Visible">
+    <Grid Visibility="Visible" >
         <Grid.Resources>
             <Storyboard x:Key="SwitchOffGrid">
                 <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -663,7 +666,7 @@
                     Click="SettingsButton_Click">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock x:Name="SettingsButtonText" Text="Settings" Margin="0 0 5 0"/>
-                    <Image Source="Resources/gear.png"/>
+                    <!--<Image Source="Resources/gear.png"/>-->
                 </StackPanel>
             </Button>
         </Grid>
@@ -856,7 +859,7 @@
                 <RadioButton Name="type" Content="Typing"
                              Style="{StaticResource ActionButton}"
                              GroupName="Action"/>
-                <RadioButton Name="pressCombimation" Content="Combination" 
+                <RadioButton Name="pressCombination" Content="Combination" 
                              Style="{StaticResource ActionButton}"
                              GroupName="Action"/>
             </StackPanel>

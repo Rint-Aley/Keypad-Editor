@@ -1,49 +1,32 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls.Primitives;
 using System.Threading;
 using System.IO;
+using Microsoft.Win32;
 namespace Keypad_Editor
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    /// 
-
     public partial class MainWindow : System.Windows.Window
     {
-
         MainWindowLogic logic;
-        ///Объявление переменных
-        private short selectedKey = 0, lastSelectedKey = 0;
-        string DontSelectedAnyButtons;
 
-        //Кэш
-        bool cache = true;
-        string[] activityInFile = new string[App.NumberOfKeys];
-        string[] parametrInFile = new string[App.NumberOfKeys];
-        string[] activityNew = new string[App.NumberOfKeys];
-        string[] parametrNew = new string[App.NumberOfKeys];
-        //Кэш
-        string selectedActivity = String.Empty;
+        string? DontSelectedAnyButtons;
 
-        //Комбинации
+        //Logic for combinations
         private short selectedHotkey = 1;
 
         string[] hotkeys = new string[1];
         int[] delays = new int[1];
-        ///Объявление переменных
-        
 
         public MainWindow()
         {
             logic = new MainWindowLogic(this);
             InitializeComponent();
             //Localizate();
-            logic.ReadDataFromFile(0);
+            logic.ReadDataFromFile();
         }
 
         public void Localizate()
@@ -61,7 +44,7 @@ namespace Keypad_Editor
             Back.Content = iniFile.Read("Back.Text", "DeviceBlock");
             open.Content = iniFile.Read("Opening", "ActivityButtons");
             type.Content = iniFile.Read("Typing", "ActivityButtons");
-            pressCombimation.Content = iniFile.Read("Combination", "ActivityButtons");
+            pressCombination.Content = iniFile.Read("Combination", "ActivityButtons");
             Apply.Content = iniFile.Read("Apply.Text", "ActivityGrids");
             selectDirectory.Content = iniFile.Read("SelectDirectory", "ActivityGrids");
             TipTypingGrid.Text = iniFile.Read("TipTypingGrid", "ActivityGrids");
@@ -131,76 +114,61 @@ namespace Keypad_Editor
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedKey != 0) WriteNewValuesgit();
-            if(parametrNew.SequenceEqual(parametrInFile) == false || activityNew.SequenceEqual(activityInFile) == false)
-            {
-                YesNoForm yesNo = new YesNoForm("Doesn't save changes", "Are you going to save changes?");
-                yesNo.ShowDialog();
-                //Если выбрано нет
-                if (!yesNo.Result)
-                {
-                    Array.Copy(parametrInFile, parametrNew, parametrInFile.Length);
-                    Array.Copy(activityInFile, activityNew, activityInFile.Length);
-                }
-                else
-                    Apply_Click(Apply, null);
+            //if (selectedKey != 0) WriteNewValues();
+            //if(parametrNew.SequenceEqual(parametrInFile) == false || activityNew.SequenceEqual(activityInFile) == false)
+            //{
+            //    YesNoForm yesNo = new YesNoForm("Doesn't save changes", "Are you going to save changes?");
+            //    yesNo.ShowDialog();
+            //    //Если выбрано нет
+            //    if (!yesNo.Result)
+            //    {
+            //        Array.Copy(parametrInFile, parametrNew, parametrInFile.Length);
+            //        Array.Copy(activityInFile, activityNew, activityInFile.Length);
+            //    }
+            //    else
+            //        Apply_Click(Apply, null);
                 
-            }
-            BigDeviceGrid.Visibility = Visibility.Visible;
-            MainWindowGrid.Visibility = Visibility.Hidden;
-            selectedKey = 0;
-            lastSelectedKey = 0;
-            //Очищаем экран
-            HideControls();
-            DeleteActivity();
-            foreach (System.Windows.Controls.RadioButton radioButton in RadioButtonsOfDevice.Children)
-            {
-                radioButton.IsChecked = false;
-            }
+            //}
+            //BigDeviceGrid.Visibility = Visibility.Visible;
+            //MainWindowGrid.Visibility = Visibility.Hidden;
+            //selectedKey = 0;
+            //lastSelectedKey = 0;
+            ////Очищаем экран
+            //HideControls();
+            //DeleteActivity();
+            //foreach (System.Windows.Controls.RadioButton radioButton in RadioButtonsOfDevice.Children)
+            //{
+            //    radioButton.IsChecked = false;
+            //}
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-            ToggleButton selectedAction = (ToggleButton)sender;
 
-            if (selectedKey == 0)
+            var currentAction = (ToggleButton)sender;
+
+            if (logic.selectedKey == 255)
             {
-                Thread clearErrorTextBlock = new Thread(runTimer);
-                selectedAction.IsChecked = false;
                 //Вывод ошибки
+                Thread clearErrorTextBlock = new Thread(runTimer);
+                currentAction.IsChecked = false;
                 ErrorTextBlock.Text = DontSelectedAnyButtons;
                 clearErrorTextBlock.Start();
             }
             //При двойом нажатии на одну и ту же кнопку, она отключается
-            else if (selectedMove.Name == selectedActivity)
+            else if (currentAction.Name == logic.selectedAction.ToString())
             {
-                DeleteActivity();
-                Apply.Visibility = Visibility.Hidden;
+                //Hide every grid
+                logic.changeAction("none");
                 //selectedMove.IsChecked = false;
             }
             else
             {
-                if(selectedMove.IsChecked != true) selectedMove.IsChecked = true;
-                DeleteActivity();
-                selectedMove.IsChecked = true;
-                if (Apply.Visibility == Visibility.Hidden) Apply.Visibility = Visibility.Visible;
-                switch (selectedMove.Name)
-                {
-                    case "open":
-                        OpenGrid.Visibility = Visibility.Visible;
-                        selectedActivity = "open";
-                        break;
-                    case "type":
-                        TypeGrid.Visibility = Visibility.Visible;
-                        selectedActivity = "type";
-                        break;
-                    case "pressCombimation":
-                        CombinationGrid.Visibility = Visibility.Visible;
-                        selectedActivity = "pressCombimation";
-                        break;
-                }
+                //currentAction.IsChecked = true;
+                logic.changeAction(currentAction.Name);
             }
         }
+
 
         //Метод для исчезнвения текста
         private async void runTimer()
@@ -216,38 +184,31 @@ namespace Keypad_Editor
 
         //Метод для исчезнвения текста
 
-
-
-        //Скрывает все контейнеры действий 
-        private void DeleteActivity()
-        {
-            OpenGrid.Visibility = Visibility.Hidden;
-            TypeGrid.Visibility = Visibility.Hidden;
-            CombinationGrid.Visibility = Visibility.Hidden;
-
-            open.IsChecked = false;
-            type.IsChecked = false;
-            pressCombimation.IsChecked = false;
-
-            selectedActivity = "";
-        }
-
         //Кнопка выбора файла
         private void selectDirectory_Click(object sender, RoutedEventArgs e)
         {
-            using (System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog())
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            
+            if (PathToFileOrWebsite.Text != string.Empty)
             {
-                if (PathToFileOrWebsite.Text != string.Empty)
-                {
-                    openFileDialog.InitialDirectory = PathToFileOrWebsite.Text; //Открывает нужную деррикторию
-                    openFileDialog.FileName = Path.GetFileName(PathToFileOrWebsite.Text); //Пишет в имя уже выбранный файл
-                }
-                else openFileDialog.InitialDirectory = @"C:\";
-                openFileDialog.RestoreDirectory = true;
-
-                if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) PathToFileOrWebsite.Text = openFileDialog.FileName;
+                openFileDialog.InitialDirectory = PathToFileOrWebsite.Text; //Открывает нужную деррикторию
+                //openFileDialog.FileName = Path.GetFileName(PathToFileOrWebsite.Text); //Пишет в имя уже выбранный файл
             }
+            else openFileDialog.InitialDirectory = @"C:\";
+
+            bool? result = openFileDialog.ShowDialog();
+
+            if (result == true) PathToFileOrWebsite.Text = openFileDialog.FileName;
         }
+
+        //Применить
+        private void Apply_Click(object sender, RoutedEventArgs e)
+        {
+            logic.SaveSettings();
+        }
+
+
+        //Система комбинцаций
 
         //Удаляет последнню клавишу
         private void DeleateKeyButton_Click(object sender, RoutedEventArgs e)
@@ -259,28 +220,6 @@ namespace Keypad_Editor
                 KeysTextBlock.Text += keys[i] + " ";
             }
         }
-
-        //Применить
-        private void Apply_Click(object sender, RoutedEventArgs e)
-        {
-            //Сохраняет значения текущей кнопки
-            WriteNewValues();
-
-            for (short i = 0; i < App.NumberOfKeys; i++)
-            {
-                if (activityNew[i] == "combination")
-                {
-                    FileEditor.ChangeText(i + 1, "hotKey", parametrNew[i]);
-                }
-                else
-                    FileEditor.ChangeText(i + 1, activityNew[i], parametrNew[i]);
-            }
-
-            FillingInArrays();
-        }
-
-
-        //Система комбинцаций
 
         //Переходит в предыдущую группу комбинаций
         private void LastGroupKeysButton_Click(object sender, RoutedEventArgs e)

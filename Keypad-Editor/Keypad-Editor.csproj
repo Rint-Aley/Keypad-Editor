@@ -9,4 +9,16 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\BackImage.png" />
+    <None Remove="Resources\close_window.png" />
+    <None Remove="Resources\Keypad.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\BackImage.png" />
+    <Resource Include="Resources\close_window.png" />
+    <Resource Include="Resources\Keypad.ico" />
+  </ItemGroup>
+
 </Project>

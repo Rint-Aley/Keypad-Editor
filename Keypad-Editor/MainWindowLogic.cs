@@ -1,39 +1,33 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Text.Json;
 
 namespace Keypad_Editor
 {
     public class MainWindowLogic
     {
-        MainWindow Window;
-        
-        //Fields decloration
-        private short selectedKey, lastSelectedKey;
-        private string[] actions = new string[] { "none", "open", "type", "pressCombination" };
-        public enum action : byte
+        private MainWindow Window; // Pointer to main window
+        public enum KeypadActions : byte
         {
-            none = 0,
-            open = 1,
-            type = 2,
-            pressCombination = 3
+            none,
+            open,
+            type,
+            pressCombination
         }
-        action selectedAction;
-        
-        struct pieceOfCombination
-        {
-            uint Delay;
-            string Keys;
-        }
+
+        private List<Group> Groups; // The list of all groups in settings file
+        private Group? currentGroup; // "Pointer" to the current group
+
+        //255 (0xFF) is reserved. If this variables have 255 it will mean key isn't selected
+        public byte selectedKey = 255, lastSelectedKey = 255;
+
+        public KeypadActions selectedAction;
 
         //Cache system
         bool cache = true;
-        action[] actionInFile = new action[App.NumberOfKeys];
-        action[] actionNew = new action[App.NumberOfKeys];
-        string[] parametrInFile = new string[App.NumberOfKeys];
-        string[] parametrNew = new string[App.NumberOfKeys];
+        private KeypadActions[] ActionsInFile = new KeypadActions[App.NumberOfKeys];
+        private string[] ParametrsInFile = new string[App.NumberOfKeys];
+        private KeypadActions[] newActions = new KeypadActions[App.NumberOfKeys];
+        private string[] newParametrs = new string[App.NumberOfKeys];
 
         public MainWindowLogic (MainWindow owner)
         {
@@ -43,88 +37,60 @@ namespace Keypad_Editor
         /// <summary>
         /// Reads data about actions for device and fills arrays to get fast access to it.
         /// </summary>
-        public void ReadDataFromFile(ushort pointer)
-        { 
-            for(int i = 0; i < App.NumberOfKeys; i++)
+        public void ReadDataFromFile()
+        {
+            Groups = new List<Group>(JsonReader.Read());
+
+            //TODO: Reading Inital group from App and using it
+            switchGroup("main");
+
+            if (currentGroup == null)
             {
-                string line = FileEditor.readLine(i + 1);
-
-                if (line == null) //if it's the last line
-                {
-                    //calls settings parser to "repair" file
-                }
-
-                string[] commandUnit = line.Split(' ');
-
-                //Checks for invalid number of commands
-                if (commandUnit.Length == 2)
-                {
-                    for (int j = 0; j < actions.Length; j++)
-                    {
-                        if (commandUnit[1] == actions[j])
-                        {
-                            actionInFile[i] = (action)j;
-                            break;
-                        }
-                    }
-                    parametrInFile[i] = String.Empty;
-                    continue;
-                }
-                else if (commandUnit.Length < 2)
-                {
-                    actionInFile[i] = 0;
-                    parametrInFile[i] = String.Empty;
-                    continue;
-                }
-
-                //Assigns action
-                for (int j = 0; j < actions.Length; j++)
-                {
-                    if (commandUnit[1] == actions[j])
-                    {
-                        actionInFile[i] = (action) j;
-                        break;
-                    }
-                }
-
-                //Assigns parametr
-                if (actionInFile[i] == action.none)
-                    parametrInFile[i] = "";
-                else
-                {
-                    //Insert all text after command into param
-                    string param = string.Empty;
-                    for (int j = 2; j < commandUnit.Length; j++)
-                    {
-                        param += commandUnit[j] + " ";
-                    }
-                    param.Remove(param.Length - 1);
-
-                    parametrInFile[i] = param;
-                }
+                // There isn't inital group in file
+                // TODO: Window to choose new inital group from the avialable
             }
-            actionInFile.CopyTo(actionNew, 0);
-            parametrInFile.CopyTo(parametrNew, 0);
+
+            // TODO: Check if array of actions have the same number of elements as in config file 
+            IntArrayToEmum(currentGroup.Actions, out ActionsInFile);
+            currentGroup.Parametrs?.CopyTo(ParametrsInFile, 0);
+            ActionsInFile.CopyTo(newActions, 0);
+            ParametrsInFile.CopyTo(newParametrs, 0);
+        }
+
+        private void IntArrayToEmum(int[] intArr, out KeypadActions[] enumArr)
+        {
+            enumArr = new KeypadActions[App.NumberOfKeys];
+            for (int i = 0; i < intArr.Length; i++)
+            {
+                enumArr[i] = (KeypadActions)intArr[i];
+            }
+
         }
 
         public void retunToOldSettings()
         {
-            actionInFile.CopyTo(actionNew, 0);
-            parametrInFile.CopyTo(parametrNew, 0);
+            ActionsInFile.CopyTo(newActions, 0);
+            ParametrsInFile.CopyTo(newParametrs, 0);
             HideControls(true);
-            selectedAction = actionInFile[selectedKey];
+            selectedAction = ActionsInFile[selectedKey];
             changeDisplayedGrid(true);
         }
 
+        /// <summary>
+        /// Handles changing key event.
+        /// </summary>
+        /// <param name="newKey">The key changes to...</param>
         public void changeKey(short newKey)
         {
-            selectedKey = (short)(newKey - 1);
+            selectedKey = (byte)(newKey - 1);
             if(lastSelectedKey != selectedKey)
             {
-                if ((selectedKey != 0) & cache)
+                if ((lastSelectedKey != 255) & cache)
                     addDataToCache();
+                else if (lastSelectedKey == 255)
+                    Window.Apply.Visibility = Visibility.Visible;
                 HideControls(true);
-                selectedAction = actionNew[selectedKey];
+                selectedAction = newActions[selectedKey];
                 changeDisplayedGrid(true);
                 lastSelectedKey = selectedKey;
             }
@@ -132,18 +98,18 @@ namespace Keypad_Editor
 
         private void addDataToCache()
         {
-            actionNew[lastSelectedKey] = selectedAction;
+            newActions[lastSelectedKey] = selectedAction;
             switch (selectedAction)
             {
-                case action.open:
-                    parametrNew[lastSelectedKey] = Window.PathToFileOrWebsite.Text;
+                case KeypadActions.open:
+                    newParametrs[lastSelectedKey] = Window.PathToFileOrWebsite.Text;
                     break;
 
-                case action.type:
-                    parametrNew[lastSelectedKey] = Window.TextToType.Text;
+                case KeypadActions.type:
+                    newParametrs[lastSelectedKey] = Window.TextToType.Text;
                     break;
 
-                case action.pressCombination:
+                case KeypadActions.pressCombination:
                     //TODO: Fill it
                     break;
             }
@@ -157,15 +123,18 @@ namespace Keypad_Editor
         {
             switch (selectedAction)
             {
-                case action.open:
+                case KeypadActions.open:
+                    Window.open.IsChecked = false;
                     Window.OpenGrid.Visibility = Visibility.Collapsed;
                     break;
 
-                case action.type:
+                case KeypadActions.type:
+                    Window.type.IsChecked = false;
                     Window.TypeGrid.Visibility = Visibility.Collapsed;
                     break;
 
-                case action.pressCombination:
+                case KeypadActions.pressCombination:
+                    Window.pressCombination.IsChecked = false;
                     Window.CombinationGrid.Visibility = Visibility.Collapsed;
                     //TODO: Fill it
                     break;
@@ -186,44 +155,67 @@ namespace Keypad_Editor
         {
             switch (selectedAction)
             {
-                case action.open:
+                case KeypadActions.open:
+                    Window.open.IsChecked = true;
                     Window.OpenGrid.Visibility = Visibility.Visible;
-                    if (setValues) Window.PathToFileOrWebsite.Text = parametrNew[selectedKey];
+                    if (setValues) Window.PathToFileOrWebsite.Text = newParametrs[selectedKey];
                     break;
 
-                case action.type:
+                case KeypadActions.type:
+                    Window.type.IsChecked = true;
                     Window.TypeGrid.Visibility = Visibility.Visible;
-                    if (setValues) Window.TextToType.Text = parametrNew[selectedKey];
+                    if (setValues) Window.TextToType.Text = newParametrs[selectedKey];
                     break;
 
-                case action.pressCombination:
+                case KeypadActions.pressCombination:
+                    Window.pressCombination.IsChecked = true;
                     Window.CombinationGrid.Visibility = Visibility.Visible;
                     //TODO: setValues 
                     break;
             }
         }
-
         
-        public void changeAction(action newAction)
+        public void changeAction(string sNewAction)
         {
+            KeypadActions newAction = (KeypadActions)Enum.Parse(typeof(KeypadActions), sNewAction);
             HideControls(false);
             selectedAction = newAction;
             changeDisplayedGrid(false);
         }
 
+        /// <summary>
+        /// Saves all settings to a file
+        /// </summary>
         public void SaveSettings()
         {
             //First of all we save command for current button
             addDataToCache();
 
-            actionNew.CopyTo(actionInFile, 0);
-            parametrNew.CopyTo(parametrInFile, 0);
+            newActions.CopyTo(ActionsInFile, 0);
+            newParametrs.CopyTo(ParametrsInFile, 0);
 
-            //Writing new values
-            for(short i = 0; i < App.NumberOfKeys; i++)
+            Group newGroup = new() {
+                Name = currentGroup?.Name,
+                Actions = ActionsInFile.Select(i => (int)i).ToArray(),
+                Parametrs = ParametrsInFile
+            };
+            Groups.Remove(currentGroup);
+            Groups.Add(newGroup);
+
+            JsonReader.Write(Groups);
+        }
+
+        private void switchGroup(string name)
+        {
+            foreach (var group in Groups)
             {
-
+                if (group.Name == name)
+                {
+                    currentGroup = group;
+                }
             }
+            // TODO: Perhaps I should to add a handler if currentGroup is null
+            //TODO: clear window
         }
     }
 }
