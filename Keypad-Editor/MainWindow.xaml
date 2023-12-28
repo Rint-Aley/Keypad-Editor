@@ -916,47 +916,47 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <!--// Подсказка 1 //-->
+                <!--// Tip 1 //-->
                 <TextBlock x:Name="CombinationTip1" Grid.ColumnSpan="3" Margin="5 4" Foreground="#FF989A98"
                            FontSize="16" Text="Setting up a combination"/>
-                <!--// Кнопка записи клавиши //-->
+                <!--// "Record key" button //-->
                 <ToggleButton x:Name="AddKeyToCombination" Grid.Row="1"
                               Style="{StaticResource AddKeyToCombination}"
                               ToolTip="Record key for combination"/>
-                <!--// Кнопка удаления последней клавиши комбинации //-->
+                <!--// Deleate last key in combination button //-->
                 <Button x:Name="DeleateKeyButton" Grid.Column="1" Grid.Row="1"
                         Style="{StaticResource DeleateKeyButton}"
                         ToolTip="Deleate key from combination"/>
-                <!--// Клавиши выбранные для показывающий //-->
+                <!--// Keys for combination //-->
                 <Border Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="3"
                         BorderBrush="#FF202225"
                         BorderThickness="2" Margin="5">
                     <TextBlock Name="KeysTextBlock" Foreground="#989a98" Padding="2 0"/>
                 </Border>
-                <!--// Подсказка 2 //-->
+                <!--// Tip 2 //-->
                 <TextBlock x:Name="CombinationTip2" Grid.Row="2" Grid.ColumnSpan="3" Margin="5 4" Foreground="#FF989A98"
                            FontSize="16" Text="Setting up a group of combination"/>
-                <!--// К предыдущей группе комбинаций //-->
-                <Button x:Name="LastGroupKeys" IsEnabled="False"
+                <!--// To the previous group of combination //-->
+                <Button x:Name="ToPreviousGroupOfCombination" IsEnabled="False"
                         Grid.Column="2" Grid.Row="3"
                         Margin="5" Height="20"
                         VerticalAlignment="Top" HorizontalAlignment="Right"
                         Style="{StaticResource LastGroupKeys}"
-                        ToolTip="To last group of combination"/>
-                <!--// К следующей группе комбинаций //-->
-                <Button x:Name="NextGroupKeys" IsEnabled="False"
+                        ToolTip="To the previous group of combination"/>
+                <!--// To the next group of combination //-->
+                <Button x:Name="ToNextGroupOfCombination" IsEnabled="False"
                         Grid.Row="3" Grid.Column="4" Margin="5"
                         Height="20" Width="20"
                         VerticalAlignment="Top" HorizontalAlignment="Left"
                         Style="{StaticResource NextGroupKeys}"
-                        ToolTip="To next group of combination"/>
-                <!--// Номер выбранной пруппы комбинации //-->
+                        ToolTip="To the next group of combination"/>
+                <!--// Number of group //-->
                 <Border Grid.Row="3" Grid.Column="3" VerticalAlignment="Top" Margin="5"
                         Height="20" BorderThickness="0 0 0 2" BorderBrush="#FF202225">
                     <TextBlock Style="{StaticResource SelectedGroupKeys}"
                                Text="1" Name="NumberOfGroupTextBlock"/>
                 </Border>
-                <!--// Задержка //-->
+                <!--// Delay text box //-->
                 <TextBox Name="DelayTextBlock" Grid.Row="3" Grid.Column="2"
                          Margin="5 5 35 5" Height="20" 
                          VerticalAlignment="Top" IsEnabled="False"

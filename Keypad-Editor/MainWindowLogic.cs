@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Text.Json;
 
 namespace Keypad_Editor
 {
@@ -17,17 +16,27 @@ namespace Keypad_Editor
         private List<Group> Groups; // The list of all groups in settings file
         private Group? currentGroup; // "Pointer" to the current group
 
-        //255 (0xFF) is reserved. If this variables have 255 it will mean key isn't selected
-        public byte selectedKey = 255, lastSelectedKey = 255;
+        // 255 (0xFF) is reserved. If this variables have 255 it will mean key isn't selected
+        public const byte KEY_DONT_SELECTED = 255;
+        public byte selectedKey = KEY_DONT_SELECTED, lastSelectedKey = KEY_DONT_SELECTED;
 
         public KeypadActions selectedAction;
 
-        //Cache system
+        // Cache system
         bool cache = true;
         private KeypadActions[] ActionsInFile = new KeypadActions[App.NumberOfKeys];
         private string[] ParametrsInFile = new string[App.NumberOfKeys];
         private KeypadActions[] newActions = new KeypadActions[App.NumberOfKeys];
         private string[] newParametrs = new string[App.NumberOfKeys];
+
+        // Combination system
+        struct CombinationUnit
+        {
+            public string keys;
+            public int delay;
+        }
+
+        List<CombinationUnit> combination;
 
         public MainWindowLogic (MainWindow owner)
         {
@@ -42,7 +51,7 @@ namespace Keypad_Editor
             Groups = new List<Group>(JsonReader.Read());
 
             //TODO: Reading Inital group from App and using it
-            switchGroup("main");
+            SwitchGroup("main");
 
             if (currentGroup == null)
             {
@@ -67,36 +76,36 @@ namespace Keypad_Editor
 
         }
 
-        public void retunToOldSettings()
+        public void RetunToOldSettings()
         {
             ActionsInFile.CopyTo(newActions, 0);
             ParametrsInFile.CopyTo(newParametrs, 0);
             HideControls(true);
             selectedAction = ActionsInFile[selectedKey];
-            changeDisplayedGrid(true);
+            ChangeDisplayedGrid(true);
         }
 
         /// <summary>
         /// Handles changing key event.
         /// </summary>
         /// <param name="newKey">The key changes to...</param>
-        public void changeKey(short newKey)
+        public void ChangeKey(short newKey)
         {
             selectedKey = (byte)(newKey - 1);
             if(lastSelectedKey != selectedKey)
             {
-                if ((lastSelectedKey != 255) & cache)
-                    addDataToCache();
-                else if (lastSelectedKey == 255)
+                if ((lastSelectedKey != KEY_DONT_SELECTED) & cache)
+                    AddDataToCache();
+                else if (lastSelectedKey == KEY_DONT_SELECTED)
                     Window.Apply.Visibility = Visibility.Visible;
                 HideControls(true);
                 selectedAction = newActions[selectedKey];
-                changeDisplayedGrid(true);
+                ChangeDisplayedGrid(true);
                 lastSelectedKey = selectedKey;
             }
         }
 
-        private void addDataToCache()
+        private void AddDataToCache()
         {
             newActions[lastSelectedKey] = selectedAction;
             switch (selectedAction)
@@ -135,15 +144,19 @@ namespace Keypad_Editor
 
                 case KeypadActions.pressCombination:
                     Window.pressCombination.IsChecked = false;
+                    Window.AddKeyToCombination.IsChecked = false;
                     Window.CombinationGrid.Visibility = Visibility.Collapsed;
-                    //TODO: Fill it
                     break;
             }
             if (clearData)
             {
                 Window.PathToFileOrWebsite.Text = String.Empty;
                 Window.TextToType.Text = String.Empty;
-                //TODO: pressCombination
+
+                Window.NumberOfGroupTextBlock.Text = "1";
+                Window.KeysTextBlock.Text = "";
+                Window.DelayTextBlock.Text = "0";
+                combination = new List<CombinationUnit> { new CombinationUnit() { keys = "", delay = 0 } };
             }
         }
 
@@ -151,7 +164,7 @@ namespace Keypad_Editor
         /// Shows grid of the current selected action.
         /// </summary>
         /// <param name="setValues">Whether it will set parameter's value to selected.</param>
-        private void changeDisplayedGrid(bool setValues)
+        private void ChangeDisplayedGrid(bool setValues)
         {
             switch (selectedAction)
             {
@@ -170,18 +183,71 @@ namespace Keypad_Editor
                 case KeypadActions.pressCombination:
                     Window.pressCombination.IsChecked = true;
                     Window.CombinationGrid.Visibility = Visibility.Visible;
-                    //TODO: setValues 
+                    if (setValues)
+                    {
+                        string[] parts = newParametrs[selectedKey].Split(' ');
+                        
+                        combination = new List<CombinationUnit>(parts.Length / 2 + 1);
+                        // comment to "i < parts.Length - 1"
+                        // If parts.Length is even number it will add all values
+                        // If it isn't it will add all values except the last one
+                        for (int i = 0; i < parts.Length - 1; i += 2)
+                        {
+                            combination.Add(new CombinationUnit()
+                            {
+                                keys = parts[i],
+                                delay = Convert.ToInt32(parts[i + 1])
+                            });
+                        }
+                        // The last one elements will be added here (if it's necessary)
+                        if (parts.Length % 2 != 0)
+                        {
+                            combination.Add(new CombinationUnit()
+                            {
+                                keys = parts[parts.Length - 1],
+                                delay = 0
+                            });
+                        }
+
+                        // Showing the first group on the screen
+                        Window.NumberOfGroupTextBlock.Text = "1";
+                        Window.KeysTextBlock.Text = combination[0].keys;
+                        Window.DelayTextBlock.Text = combination[0].delay.ToString();
+                    }
                     break;
             }
         }
         
-        public void changeAction(string sNewAction)
+        public void ChangeAction(string sNewAction)
         {
             KeypadActions newAction = (KeypadActions)Enum.Parse(typeof(KeypadActions), sNewAction);
             HideControls(false);
             selectedAction = newAction;
-            changeDisplayedGrid(false);
+            ChangeDisplayedGrid(false);
         }
+
+        // Combination logic
+
+        public void DeleateKeyFromCombination()
+        {
+
+        }
+        public void AddGrop()
+        {
+
+        }
+
+        public void ToTheNextGroupOfCombination()
+        {
+
+        }
+
+        public void ToThePreviousGroupOfCombination()
+        {
+
+        }
+
+        // Combination logic
 
         /// <summary>
         /// Saves all settings to a file
@@ -189,7 +255,7 @@ namespace Keypad_Editor
         public void SaveSettings()
         {
             //First of all we save command for current button
-            addDataToCache();
+            AddDataToCache();
 
             newActions.CopyTo(ActionsInFile, 0);
             newParametrs.CopyTo(ParametrsInFile, 0);
@@ -205,7 +271,7 @@ namespace Keypad_Editor
             JsonReader.Write(Groups);
         }
 
-        private void switchGroup(string name)
+        private void SwitchGroup(string name)
         {
             foreach (var group in Groups)
             {

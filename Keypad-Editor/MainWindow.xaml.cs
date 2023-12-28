@@ -52,8 +52,8 @@ namespace Keypad_Editor
             CombinationTip2.Text = iniFile.Read("Tip2", "CombinationGrid");
             AddKeyToCombination.ToolTip = iniFile.Read("AddKeyToCombination.ToolTip", "CombinationGrid");
             DeleateKeyButton.ToolTip = iniFile.Read("DeleateKeyButton.ToolTip", "CombinationGrid");
-            LastGroupKeys.ToolTip = iniFile.Read("LastGroupKeys.ToolTip", "CombinationGrid");
-            NextGroupKeys.ToolTip = iniFile.Read("NextGroupKeys.ToolTip", "CombinationGrid");
+            ToPreviousGroupOfCombination.ToolTip = iniFile.Read("LastGroupKeys.ToolTip", "CombinationGrid");
+            ToNextGroupOfCombination.ToolTip = iniFile.Read("NextGroupKeys.ToolTip", "CombinationGrid");
             DelayTextBlock.ToolTip = iniFile.Read("DelayTextBlock.ToolTip", "CombinationGrid");
             DeleateGroupCombnations.ToolTip = iniFile.Read("DeleateGroupCombnations.ToolTip", "CombinationGrid");
             AddGroupCombimations.ToolTip = iniFile.Read("AddGroupCombimations.ToolTip", "CombinationGrid");
@@ -63,10 +63,9 @@ namespace Keypad_Editor
 
             DontSelectedAnyButtons = iniFile.Read("ErrorKeyIsNotSelected", "DeviceBlock");
         }
-
         
         /// <summary>
-        /// Hides window.
+        /// Close window.
         /// </summary>
         private void Close_Click(object sender, RoutedEventArgs e)
         {
@@ -100,7 +99,7 @@ namespace Keypad_Editor
         /// </summary>
         private void ToCurrentSettings_Click(object sender, RoutedEventArgs e)
         {
-            logic.retunToOldSettings();
+            logic.RetunToOldSettings();
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace Keypad_Editor
         private void Key_Click(object sender, RoutedEventArgs e)
         {
             var selectedKeyTag = ((ToggleButton)sender).Tag;
-            logic.changeKey(Convert.ToInt16(selectedKeyTag));
+            logic.ChangeKey(Convert.ToInt16(selectedKeyTag));
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
@@ -144,47 +143,37 @@ namespace Keypad_Editor
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
         {
-
             var currentAction = (ToggleButton)sender;
-
-            if (logic.selectedKey == 255)
+            // If user doesn't select any keys it will notify about it
+            if (logic.selectedKey == MainWindowLogic.KEY_DONT_SELECTED)
             {
-                //Вывод ошибки
                 Thread clearErrorTextBlock = new Thread(runTimer);
                 currentAction.IsChecked = false;
                 ErrorTextBlock.Text = DontSelectedAnyButtons;
                 clearErrorTextBlock.Start();
             }
-            //При двойом нажатии на одну и ту же кнопку, она отключается
+            // If user selected active action it will make it unactive
             else if (currentAction.Name == logic.selectedAction.ToString())
             {
-                //Hide every grid
-                logic.changeAction("none");
-                //selectedMove.IsChecked = false;
+                logic.ChangeAction("none");
             }
+            // Changes action
             else
             {
-                //currentAction.IsChecked = true;
-                logic.changeAction(currentAction.Name);
+                logic.ChangeAction(currentAction.Name);
             }
         }
 
-
-        //Метод для исчезнвения текста
+        /// <summary>
+        /// Clear text in text box after 2 seconds
+        /// </summary>
         private async void runTimer()
         {
             await Task.Delay(2000);
-            Dispatcher.BeginInvoke(new Action(() => mupdateScreen()));
+            Dispatcher.BeginInvoke(new Action(() => ErrorTextBlock.Text = ""));
         }
 
-        private void mupdateScreen()
-        {
-            ErrorTextBlock.Text = "";
-        }
-
-        //Метод для исчезнвения текста
-
-        //Кнопка выбора файла
+        // Opens menu to choose the path to the file or to the folder
         private void selectDirectory_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -201,7 +190,7 @@ namespace Keypad_Editor
             if (result == true) PathToFileOrWebsite.Text = openFileDialog.FileName;
         }
 
-        //Применить
+        // Applies settings
         private void Apply_Click(object sender, RoutedEventArgs e)
         {
             logic.SaveSettings();
@@ -247,8 +236,8 @@ namespace Keypad_Editor
             {
                 DeleateGroupCombnations.IsEnabled = false;
                 DelayTextBlock.IsEnabled = false;
-                NextGroupKeys.IsEnabled = false;
-                LastGroupKeys.IsEnabled = false;
+                //NextGroupKeys.IsEnabled = false;
+                //LastGroupKeys.IsEnabled = false;
             }
             //Смещение (с выбранного элемента) элементов массива на элемент назад
             for (int i = selectedHotkey; i < hotkeys.Length; i++)
@@ -289,8 +278,8 @@ namespace Keypad_Editor
             {
                 DeleateGroupCombnations.IsEnabled = true;
                 DelayTextBlock.IsEnabled = true;
-                NextGroupKeys.IsEnabled = true;
-                LastGroupKeys.IsEnabled = true;
+                //NextGroupKeys.IsEnabled = true;
+                //LastGroupKeys.IsEnabled = true;
             }
             ChangeSelectedGroupHotKey(Convert.ToInt16(selectedHotkey + 1));
         }
