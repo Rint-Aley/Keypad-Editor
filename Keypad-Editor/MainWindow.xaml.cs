@@ -15,12 +15,6 @@ namespace Keypad_Editor
 
         string? DontSelectedAnyButtons;
 
-        //Logic for combinations
-        private short selectedHotkey = 1;
-
-        string[] hotkeys = new string[1];
-        int[] delays = new int[1];
-
         public MainWindow()
         {
             logic = new MainWindowLogic(this);
@@ -111,6 +105,9 @@ namespace Keypad_Editor
             logic.ChangeKey(Convert.ToInt16(selectedKeyTag));
         }
 
+
+        // Change the widow from the settings, to menu
+        // I think I will give it up
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             //if (selectedKey != 0) WriteNewValues();
@@ -190,129 +187,36 @@ namespace Keypad_Editor
             if (result == true) PathToFileOrWebsite.Text = openFileDialog.FileName;
         }
 
-        // Applies settings
-        private void Apply_Click(object sender, RoutedEventArgs e)
-        {
-            logic.SaveSettings();
-        }
 
-
-        //Система комбинцаций
-
-        //Удаляет последнню клавишу
         private void DeleateKeyButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] keys = KeysTextBlock.Text.Split(' ');
-            KeysTextBlock.Text = String.Empty;
-            for (int i = 0; i < keys.Length - 2; i++)//-2 т.к. один элемент - пустая строка
-            {
-                KeysTextBlock.Text += keys[i] + " ";
-            }
+            logic.DeleateKeyFromCombination();
         }
 
-        //Переходит в предыдущую группу комбинаций
-        private void LastGroupKeysButton_Click(object sender, RoutedEventArgs e)
+        private void ToPreviousGroupOfCombinationButton_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedHotkey > 1)
-            {
-                ChangeSelectedGroupHotKey(Convert.ToInt16(selectedHotkey - 1));
-            }
+            logic.ToThePreviousGroupOfCombination();
         }
 
         //Переходит в следующую группу комбинаций
-        private void NextGroupKeysButton_Click(object sender, RoutedEventArgs e)
+        private void ToNextGroupOfCombinationButton_Click(object sender, RoutedEventArgs e)
         {
-            if(selectedHotkey < hotkeys.Length)
-            {
-                ChangeSelectedGroupHotKey(Convert.ToInt16(selectedHotkey + 1));
-            }
+            logic.ToTheNextGroupOfCombination();
         }
 
         //Удаляет группу
         private void DeleateGroupCombinations_Click(object sender, RoutedEventArgs e)
         {
-            //Когда удаляется остётся всего одна группа - блокирум кнопки
-            if (hotkeys.Length == 2)
-            {
-                DeleateGroupCombnations.IsEnabled = false;
-                DelayTextBlock.IsEnabled = false;
-                //NextGroupKeys.IsEnabled = false;
-                //LastGroupKeys.IsEnabled = false;
-            }
-            //Смещение (с выбранного элемента) элементов массива на элемент назад
-            for (int i = selectedHotkey; i < hotkeys.Length; i++)
-            {
-                hotkeys[i - 1] = hotkeys[i];
-                delays[i - 1] = delays[i];
-            }
-            Array.Resize(ref hotkeys, hotkeys.Length - 1);
-            Array.Resize(ref delays, delays.Length - 1);
-            //Если в момент удаления выбранна последняя группа, то смещаем выделение на группу назад
-            if (selectedHotkey == hotkeys.Length + 1)
-                ChangeSelectedGroupHotKey(Convert.ToInt16(selectedHotkey - 1), false);
-            else
-                ChangeSelectedGroupHotKey(selectedHotkey, false);
+            logic.DeleteGropOfCombination();
         }
 
         //Создаёт группу
         private void AddGroupCombinations_Click(object sender, RoutedEventArgs e)
         {
-            //Можно добавить защиту от превышения предела short, но это 32767 знаков, так что защита не очень то и нужна)
-            Array.Resize(ref hotkeys, hotkeys.Length + 1);
-            Array.Resize(ref delays, delays.Length + 1);
-            //Ограничение, чтобы не было ошибки
-            if (hotkeys.Length > 2)
-            {
-                //Сдвигаем все элементы массива после выбранного на элемент вперёд
-                for (int i = hotkeys.Length - 2; i > selectedHotkey - 2; i--)
-                {
-                    hotkeys[i + 1] = hotkeys[i];
-                    delays[i + 1] = delays[i];
-                }
-                //Онуляют значения для новой группы
-                hotkeys[selectedHotkey] = String.Empty;
-                delays[selectedHotkey] = 0;
-            }
-            //Когда только 1 группа комбинаций
-            else
-            {
-                DeleateGroupCombnations.IsEnabled = true;
-                DelayTextBlock.IsEnabled = true;
-                //NextGroupKeys.IsEnabled = true;
-                //LastGroupKeys.IsEnabled = true;
-            }
-            ChangeSelectedGroupHotKey(Convert.ToInt16(selectedHotkey + 1));
+            logic.AddGropOfCombination();
         }
 
-        //Событие смены группы
-        private void ChangeSelectedGroupHotKey(short newValueOfSelectedHotKey, bool save = true)
-        {
-            //При желании можно не сохранять настройки предыдуще группы, а просто сменить её
-            if (save)
-            {
-                hotkeys[selectedHotkey - 1] = KeysTextBlock.Text;
-                try
-                {
-                    delays[selectedHotkey - 1] = Convert.ToInt32(DelayTextBlock.Text);
-                }
-                catch { }
-                
-            }
-            selectedHotkey = newValueOfSelectedHotKey;
-            //Когда вы,ранны последняя группа, задерка не активна и равна нулю
-            if (selectedHotkey == hotkeys.Length)
-            {
-                DelayTextBlock.IsEnabled = false;
-                delays[selectedHotkey - 1] = 0;
-            }
-            else
-                DelayTextBlock.IsEnabled = true;
-            NumberOfGroupTextBlock.Text = Convert.ToString(selectedHotkey);
-            KeysTextBlock.Text = hotkeys[selectedHotkey - 1];
-            DelayTextBlock.Text = Convert.ToString(delays[selectedHotkey - 1]);
-        }
-
-        //Изменение текста задержки
+        // Doesn't allow to write in the text blok something that cann't be converted to the integer
         private void DelayTextBlock_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             try
@@ -333,13 +237,11 @@ namespace Keypad_Editor
             sw.Show();
         }
 
-
-        //Нажатие клавиш в форме
-        private void Window_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (AddKeyToCombination.IsChecked == true)
             {
-                //Отключает стандартные действия windows для ниже указанных клавиш
+                // Turning off standart form action to the follow keys
                 if(e.Key == Key.Enter || e.Key == Key.Space || e.Key == Key.Tab ||
                    e.Key == Key.Right || e.Key == Key.Left || e.Key == Key.Up || e.Key == Key.Down)
                 {
@@ -350,6 +252,10 @@ namespace Keypad_Editor
             }
         }
 
-        //Конец системы комбинацйий
+        // Applies settings
+        private void Apply_Click(object sender, RoutedEventArgs e)
+        {
+            logic.SaveSettings();
+        }
     }
 }

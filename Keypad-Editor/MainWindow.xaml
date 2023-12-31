@@ -14,10 +14,7 @@
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip">
     <!--Visibility="Hidden">  -->
-    <!--// Начало стилей //-->
     <Window.Resources>
-
-
         <!--// Style for text box //-->
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="FontSize" Value="14"/>
@@ -30,7 +27,6 @@
                             <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                         <ControlTemplate.Triggers>
-
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="BorderBrush" TargetName="bg" Value="Black"/>
                                 <Setter Property="BorderThickness" TargetName="bg" Value="2"/>
@@ -39,7 +35,6 @@
                                 <Setter Property="BorderBrush" TargetName="bg" Value="Black"/>
                                 <Setter Property="BorderThickness" TargetName="bg" Value="2"/>
                             </Trigger>
-
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -79,7 +74,6 @@
                             <Image Source="Resources/BackImage.png"/>
                             <ContentPresenter/>
                         </StackPanel>
-                        
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Foreground" Value="Wheat"/>
@@ -89,8 +83,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        
 
         <!--// Device's buttons //-->
         <Style x:Key="DeviceKey" TargetType="ToggleButton">
@@ -99,14 +91,12 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Margin="0.5" BorderThickness="0.5" BorderBrush="Black"
-                                CornerRadius="1" x:Name="Key" Background="{StaticResource DeviceButtonColor}">
-
+                                CornerRadius="1" x:Name="Key"
+                                Background="{StaticResource DeviceButtonColor}">
                             <Border BorderThickness="0.5" BorderBrush="Black"
                                     CornerRadius="2"
                                     Padding="6" Margin="3"/>
-
                         </Border>
-
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Background" Value="{StaticResource SelectedDeviceButtonColor}" TargetName="Key"/>
@@ -116,8 +106,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
 
         <!--// Buttons to choose action //-->
         <Style x:Key="ActionButton" TargetType="ToggleButton">
@@ -138,7 +126,6 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#FF2D2C2C" TargetName="Border"/>
                             </Trigger>
-                            
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Background" Value="#202225" />
                             </Trigger>
@@ -148,9 +135,7 @@
             </Setter>
         </Style>
 
-        
-        
-        <!--// Огромная дичь, в которой нужно разобраться //-->
+        <!--// ComboBox style //-->
         <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -180,20 +165,6 @@
                       Data="M0,0 L0,2 L4,6 L8,2 L8,0 L4,4 z"
                 />
             </Grid>
-            <!--<ControlTemplate.Triggers>
-            <Trigger Property="ToggleButton.IsMouseOver" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#808080" />
-            </Trigger>
-            <Trigger Property="ToggleButton.IsChecked" Value="true">
-                <Setter TargetName="Border" Property="Background" Value="#E0E0E0" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="Border" Property="Background" Value="#EEEEEE" />
-                <Setter TargetName="Border" Property="BorderBrush" Value="#AAAAAA" />
-                <Setter Property="Foreground" Value="#888888"/>
-                <Setter TargetName="Arrow" Property="Fill" Value="#888888" />
-            </Trigger>
-        </ControlTemplate.Triggers>-->
         </ControlTemplate>
 
         <ControlTemplate x:Key="ComboBoxTextBox" TargetType="{x:Type TextBox}">
@@ -310,9 +281,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--// Огромная дичь, в которой нужно разобраться //-->
 
-        <!--// Кнопка добавления клавиши в комбинацию //-->
         <Style x:Key="AddKeyToCombination" TargetType="ToggleButton">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="Content">
@@ -363,22 +332,11 @@
             </Setter>
             <Setter Property="Background" Value="#FF36393F"/>
             <Setter Property="Margin" Value="5"/>
-            <!--<Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border BorderBrush="#FF202225" BorderThickness="2"
-                                Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>-->
         </Style>
 
-        <Style x:Key="NextGroupKeys" TargetType="Button"
+        <Style x:Key="ToNextGroupOfCombination" TargetType="Button"
                BasedOn="{StaticResource {x:Type Button}}">
-            <EventSetter Event="Click" Handler="NextGroupKeysButton_Click"/>
+            <EventSetter Event="Click" Handler="ToNextGroupOfCombinationButton_Click"/>
             <Setter Property="Content">
                 <Setter.Value>
                     <Grid Width="16">
@@ -399,9 +357,9 @@
             </Setter>
         </Style>
 
-        <Style x:Key="LastGroupKeys" TargetType="Button"
+        <Style x:Key="ToPreviousGroupOfCombination" TargetType="Button"
                BasedOn="{StaticResource {x:Type Button}}">
-            <EventSetter Event="Click" Handler="LastGroupKeysButton_Click"/>
+            <EventSetter Event="Click" Handler="ToPreviousGroupOfCombinationButton_Click"/>
             <Setter Property="Content">
                 <Setter.Value>
                     <Grid Width="16">
@@ -461,31 +419,29 @@
             </Setter>
         </Style>
 
-        <!--// Для стартового экрана //-->
+        <!--// Device to change inital window to setting window //-->
         <Style x:Key="DeviceKeyForChangeModButton" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
                         <Border Margin="0.5" BorderThickness="0.5" BorderBrush="Black"
                                 CornerRadius="1" x:Name="Key" Background="#FF333333">
-
                             <Border BorderThickness="0.5" BorderBrush="Black"
                                     CornerRadius="2"
                                     Padding="6" Margin="3"/>
-
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="ChangeMod" TargetType="Button">
             <EventSetter Event="Click" Handler="BigDevice_Click"/>
             <Setter Property="Background" Value="#FF36393F"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        
+
                         <Viewbox Stretch="Uniform" Grid.Column="1"
                                     Grid.Row="1">
                             <Border x:Name="bord" BorderThickness="1"
@@ -588,7 +544,7 @@
                                 </Border>
                             </Border>
                         </Viewbox>
-                        
+
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="BorderBrush" Value="Black" TargetName="bord"/>
@@ -598,8 +554,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--// Для стартового экрана //-->
 
+        <!--// Style for tips //-->
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="Background" Value="{StaticResource BackgroungColor}"/>
             <Setter Property="BorderThickness" Value="1"/>
@@ -607,9 +563,8 @@
             <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
             <Setter Property="FontSize" Value="13"/>
         </Style>
-
-        <!--// The end of style //-->
     </Window.Resources>
+
     <Grid Visibility="Visible" >
         <Grid.Resources>
             <Storyboard x:Key="SwitchOffGrid">
@@ -628,7 +583,8 @@
             <RowDefinition Height="25px"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <!--// Верхняя панель //-->
+        
+        <!--// Top menu //-->
         <Grid Background="#202225" Grid.Row="0"
               x:Name="TopMenu" MouseDown="TopMenu_MouseDown">
             <!--<Button Style="{StaticResource ToFullSizeButton}"/>-->
@@ -640,7 +596,7 @@
                         Margin="2" Foreground="{StaticResource TextColor}"/>
         </Grid>
         
-        <!--// Стартовый экран //-->
+        <!--// Inital window //-->
         <Grid x:Name="BigDeviceGrid" Visibility="Hidden" Opacity="1"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -654,9 +610,8 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-
-            <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" Style="{StaticResource ChangeMod}"/>
-
+            <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
+                    Style="{StaticResource ChangeMod}"/>
             <Button x:Name="SettingsButton"
                     Grid.Column="2" Grid.Row="2"
                     Height="20" Width="80"
@@ -665,14 +620,15 @@
                     Margin="5"
                     Click="SettingsButton_Click">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="SettingsButtonText" Text="Settings" Margin="0 0 5 0"/>
+                    <TextBlock x:Name="SettingsButtonText"
+                               Text="Settings" Margin="0 0 5 0"/>
                     <!--<Image Source="Resources/gear.png"/>-->
                 </StackPanel>
             </Button>
         </Grid>
         
         
-        <!--// Основная часть //-->
+        <!--// Settings window //-->
         <Grid x:Name="MainWindowGrid" Grid.Row="2"
               Visibility="Visible" Opacity="1">
             <Grid.ColumnDefinitions>
@@ -722,12 +678,12 @@
                        Height="20" VerticalAlignment="Bottom"
                        Margin="5" Foreground="#FFA57171" FontSize="15"/>
 
-            <!--// Левое меню //-->
+            <!--// Left menu (with device) //-->
             <Viewbox Stretch="Uniform" Margin="4 30">
                 <Border BorderBrush="Black" BorderThickness="0.5"
                         CornerRadius="2" Background="#FF4C4C4C">
                     <Grid x:Name="RadioButtonsOfDevice" Margin="0.5">
-                        <!--// Для кейпада //-->
+                        <!--// Keypad device //-->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -762,7 +718,7 @@
                         <RadioButton Grid.Column="3" Grid.Row="1"
                                      GroupName="Device" Tag="8"
                                      Style="{StaticResource DeviceKey}"/>
-                        <!--// Для нампада //-->
+                        <!--// Numpad device //-->
                         <!--<Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
@@ -845,11 +801,9 @@
                                      Style="{StaticResource DeviceKey}"/>-->
                     </Grid>
                 </Border>
-
             </Viewbox>
 
-
-            <!--// Меню выбора действия //-->
+            <!--// Actions selection menu //-->
             <StackPanel Orientation="Vertical" Grid.Column="2" 
                         x:Name="ActionsMenu">
 
@@ -864,7 +818,7 @@
                              GroupName="Action"/>
             </StackPanel>
 
-            <!--// Открытие //-->
+            <!--// Grids for actions //-->
             <Grid x:Name="OpenGrid" Visibility="Hidden"
                   Grid.Column="4">
                 
@@ -887,7 +841,6 @@
                         VerticalAlignment="Top"/>
             </Grid>
             
-            <!--// Печать //-->
             <Grid x:Name="TypeGrid" Visibility="Hidden"
                   Grid.Column="4">
                 <StackPanel Orientation="Vertical">
@@ -899,7 +852,6 @@
                 </StackPanel>
             </Grid>
 
-            <!--// Комбинация клавиш //-->
             <Grid x:Name="CombinationGrid" Visibility="Hidden"
                   Grid.Column="4">
                 <Grid.ColumnDefinitions>
@@ -937,18 +889,18 @@
                 <TextBlock x:Name="CombinationTip2" Grid.Row="2" Grid.ColumnSpan="3" Margin="5 4" Foreground="#FF989A98"
                            FontSize="16" Text="Setting up a group of combination"/>
                 <!--// To the previous group of combination //-->
-                <Button x:Name="ToPreviousGroupOfCombination" IsEnabled="False"
+                <Button x:Name="ToPreviousGroupOfCombination"
                         Grid.Column="2" Grid.Row="3"
                         Margin="5" Height="20"
                         VerticalAlignment="Top" HorizontalAlignment="Right"
-                        Style="{StaticResource LastGroupKeys}"
+                        Style="{StaticResource ToPreviousGroupOfCombination}"
                         ToolTip="To the previous group of combination"/>
                 <!--// To the next group of combination //-->
-                <Button x:Name="ToNextGroupOfCombination" IsEnabled="False"
+                <Button x:Name="ToNextGroupOfCombination"
                         Grid.Row="3" Grid.Column="4" Margin="5"
                         Height="20" Width="20"
                         VerticalAlignment="Top" HorizontalAlignment="Left"
-                        Style="{StaticResource NextGroupKeys}"
+                        Style="{StaticResource ToNextGroupOfCombination}"
                         ToolTip="To the next group of combination"/>
                 <!--// Number of group //-->
                 <Border Grid.Row="3" Grid.Column="3" VerticalAlignment="Top" Margin="5"
