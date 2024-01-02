@@ -227,10 +227,7 @@ namespace Keypad_Editor
                         }
 
                         // Showing the first group on the screen
-                        // If it equals to 1 (it is by default), JumpToGroup() will not work because of optimization.
-                        // So it just change it to 0, and then call the function 
-                        currentCombination = 0;
-                        JumpToGroup(1);
+                        JumpToGroup(1, false);
 
                         if (combination.Count == 1)
                             Window.DeleateGroupCombnations.IsEnabled = false;
@@ -283,9 +280,9 @@ namespace Keypad_Editor
         /// Deletes new group of combination
         /// </summary>
         public void DeleteGropOfCombination()
-        {            
+        {
             combination.RemoveAt(currentCombination - 1);
-            JumpToGroup(currentCombination - 1);
+            JumpToGroup(currentCombination, false);
             if (combination.Count == 1)
                 Window.DeleateGroupCombnations.IsEnabled = false;
         }
@@ -312,7 +309,8 @@ namespace Keypad_Editor
         /// Jumps to the group at index. If index is out of number of group, it will jump to the last one, or to the first one.
         /// </summary>
         /// <param name="index">Number of group jump to.</param>
-        public void JumpToGroup(int index)
+        /// <param name="optimization">Enable optimization when switching to the same combination group.</param>
+        public void JumpToGroup(int index, bool optimization = true)
         {
             if (index < 1)
             {
@@ -323,7 +321,7 @@ namespace Keypad_Editor
                 JumpToGroup(combination.Count);
             }
             // If combination wasn't changed, it will skip this function
-            else if (currentCombination == index)
+            else if (optimization && currentCombination == index)
             {
                 return;
             }
