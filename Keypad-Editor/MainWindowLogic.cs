@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 
 namespace Keypad_Editor
@@ -226,6 +227,9 @@ namespace Keypad_Editor
                         }
 
                         // Showing the first group on the screen
+                        // If it equals to 1 (it is by default), JumpToGroup() will not work because of optimization.
+                        // So it just change it to 0, and then call the function 
+                        currentCombination = 0;
                         JumpToGroup(1);
 
                         if (combination.Count == 1)
@@ -341,8 +345,14 @@ namespace Keypad_Editor
         /// </summary>
         private void SaveCombinationUnit()
         {
+            string keys;
+            if (Window.KeysTextBlock.Text == "")
+                keys = "";
+            else
+                keys = Window.KeysTextBlock.Text.Remove(Window.KeysTextBlock.Text.Length - 1);
+
             combination[currentCombination - 1] = new CombinationUnit(
-                Window.KeysTextBlock.Text.Remove(Window.KeysTextBlock.Text.Length - 1),
+                keys,
                 Convert.ToInt32(Window.DelayTextBlock.Text)
                 );
         }
