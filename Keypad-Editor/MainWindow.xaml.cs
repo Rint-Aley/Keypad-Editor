@@ -105,7 +105,6 @@ namespace Keypad_Editor
             logic.ChangeKey(Convert.ToInt16(selectedKeyTag));
         }
 
-
         // Change the widow from the settings, to menu
         // I think I will give it up
         private void Back_Click(object sender, RoutedEventArgs e)

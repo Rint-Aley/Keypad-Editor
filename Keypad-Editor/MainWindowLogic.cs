@@ -133,7 +133,7 @@ namespace Keypad_Editor
                         param += combination[i].keys.Replace(' ', '|') + " ";
                         param += combination[i].delay + " ";
                     }
-                    newParametrs[lastSelectedKey] = param.Remove(param.Length);
+                    newParametrs[lastSelectedKey] = param.Remove(param.Length - 1);
                     break;
             }
         }
@@ -226,10 +226,7 @@ namespace Keypad_Editor
                         }
 
                         // Showing the first group on the screen
-                        currentCombination = 1;
-                        Window.NumberOfGroupTextBlock.Text = "1";
-                        Window.KeysTextBlock.Text = combination[0].keys + ' ';
-                        Window.DelayTextBlock.Text = combination[0].delay.ToString();
+                        JumpToGroup(1);
 
                         if (combination.Count == 1)
                             Window.DeleateGroupCombnations.IsEnabled = false;
@@ -321,10 +318,19 @@ namespace Keypad_Editor
             {
                 JumpToGroup(combination.Count);
             }
+            // If combination wasn't changed, it will skip this function
+            else if (currentCombination == index)
+            {
+                return;
+            }
             else
             {
                 Window.NumberOfGroupTextBlock.Text = index.ToString();
-                Window.KeysTextBlock.Text = combination[index - 1].keys + ' ';
+                // If keys is empty string it will not add extra space
+                if (combination[index - 1].keys != "")
+                    Window.KeysTextBlock.Text = combination[index - 1].keys + ' ';
+                else
+                    Window.KeysTextBlock.Text = "";
                 Window.DelayTextBlock.Text = combination[index - 1].delay.ToString();
                 currentCombination = index;
             }
@@ -336,7 +342,7 @@ namespace Keypad_Editor
         private void SaveCombinationUnit()
         {
             combination[currentCombination - 1] = new CombinationUnit(
-                Window.KeysTextBlock.Text.Remove(Window.KeysTextBlock.Text.Length),
+                Window.KeysTextBlock.Text.Remove(Window.KeysTextBlock.Text.Length - 1),
                 Convert.ToInt32(Window.DelayTextBlock.Text)
                 );
         }
