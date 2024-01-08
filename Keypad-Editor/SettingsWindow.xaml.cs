@@ -39,9 +39,9 @@ namespace Keypad_Editor
         {
             IniFile iniFile = new IniFile();
 
-            if (App.Language == "RU")
+            if (App.AppData.Language == "RU")
                 iniFile.Path = new FileInfo("Data\\locale\\RU.ini").FullName;
-            if (App.Language == "EN")
+            if (App.AppData.Language == "EN")
                 iniFile.Path = new FileInfo("Data\\locale\\EN.ini").FullName;
 
             Title = iniFile.Read("Settings", "WindowTitles");
@@ -85,26 +85,26 @@ namespace Keypad_Editor
             if (CacheToggleButton.IsChecked == true)
             {
                 iniFile.Write("Cache", "true", "ApplicationSettings");
-                App.Cache = true;
+                //App.Cache = true;
             }
                 
             else if (CacheToggleButton.IsChecked == false)
             {
                 iniFile.Write("Cache", "false", "ApplicationSettings");
-                App.Cache = false;
+                //App.Cache = false;
             }
                 
 
             if(LanguageComboBox.SelectedItem == RussianLanguage)
             {
                 iniFile.Write("Language", "RU", "ApplicationSettings");
-                App.Language = "RU";
+                //App.Language = "RU";
             }
                 
             if (LanguageComboBox.SelectedItem == EnglishLanguage)
             {
                 iniFile.Write("Language", "EN", "ApplicationSettings");
-                App.Language = "EN";
+                //App.Language = "EN";
             }
             //Localizate();
         }

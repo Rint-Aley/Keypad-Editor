@@ -1,12 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Keypad_Editor
 {
     public class MainWindowLogic
     {
-        private MainWindow Window; // Pointer to main window
+        private readonly MainWindow Window; // Pointer to main window
+
         public enum KeypadActions : byte
         {
             none,
@@ -15,21 +14,22 @@ namespace Keypad_Editor
             pressCombination
         }
 
-        private List<Group> Groups; // The list of all groups in settings file
-        private Group? currentGroup; // "Pointer" to the current group
-
         // 255 (0xFF) is reserved. If this variables have 255 it will mean key isn't selected
         public const byte KEY_DONT_SELECTED = 255;
-        public byte selectedKey = KEY_DONT_SELECTED, lastSelectedKey = KEY_DONT_SELECTED;
-
+        public byte selectedKey = KEY_DONT_SELECTED;
+        private byte lastSelectedKey = KEY_DONT_SELECTED;
         public KeypadActions selectedAction;
 
+        // Group system
+        private List<Group> Groups = []; // The list of all groups in settings file
+        private Group? currentGroup; // "Pointer" to the current group
+
         // Cache system
-        bool cache = true;
-        private KeypadActions[] ActionsInFile = new KeypadActions[App.NumberOfKeys];
-        private string[] ParametrsInFile = new string[App.NumberOfKeys];
-        private KeypadActions[] newActions = new KeypadActions[App.NumberOfKeys];
-        private string[] newParametrs = new string[App.NumberOfKeys];
+        bool cache = App.AppData.Cache;
+        private KeypadActions[] ActionsInFile = new KeypadActions[App.AppData.NumberOfKeys];
+        private string[] ParametrsInFile = new string[App.AppData.NumberOfKeys];
+        private KeypadActions[] newActions = new KeypadActions[App.AppData.NumberOfKeys];
+        private string[] newParametrs = new string[App.AppData.NumberOfKeys];
 
         // Combination system
         struct CombinationUnit
@@ -43,12 +43,13 @@ namespace Keypad_Editor
             }
         }
 
-        List<CombinationUnit> combination;
-        private int currentCombination; // Starts with 1
+        List<CombinationUnit> combination = [];
+        private int currentCombination = 1; // Index to current keys combination. Starts with 1
 
         public MainWindowLogic (MainWindow owner)
         {
             Window = owner;
+            ReadDataFromFile();
         }
 
         /// <summary>
@@ -58,8 +59,7 @@ namespace Keypad_Editor
         {
             Groups = new List<Group>(JsonReader.Read());
 
-            //TODO: Reading Inital group from App and using it
-            SwitchGroup("main");
+            SwitchGroup(App.AppData.InitialGroupName);
 
             if (currentGroup == null)
             {
@@ -76,7 +76,7 @@ namespace Keypad_Editor
 
         private void IntArrayToEmum(int[] intArr, out KeypadActions[] enumArr)
         {
-            enumArr = new KeypadActions[App.NumberOfKeys];
+            enumArr = new KeypadActions[8];
             for (int i = 0; i < intArr.Length; i++)
             {
                 enumArr[i] = (KeypadActions)intArr[i];

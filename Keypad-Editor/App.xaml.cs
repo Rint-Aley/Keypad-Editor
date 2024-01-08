@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text.Json;
 using System.Windows;
 
 namespace Keypad_Editor
@@ -8,31 +9,33 @@ namespace Keypad_Editor
     /// </summary>
     public partial class App : Application
     {
-        public static string? Language { get; set; }
-        public static ushort NumberOfKeys { get; set; }
-        public static string? initialGroupName {
-            get { return initialGroupName; }
-            set { initialGroupName = value;
-                  //Setting new value to a settings file
-                }
+        private static ApplicationData appData = new();
+        public static ApplicationData AppData
+        {
+            get
+            {
+                return appData;
+            }
         }
-        public static bool Cache { get; set; } // Should I leave it?
-        public static short Theme { get; set; }
-        public static short InitalWindow { get; set; }
-
-
         protected override void OnStartup(StartupEventArgs e)
         {
-            IniFile iniFile = new IniFile("data\\Config.ini");
-
-            Language = iniFile.Read("Language", "ApplicationSettings");
-            if (iniFile.Read("Cache", "ApplicationSettings") == "true") Cache = true;
-            else Cache = false;
-            //Theme = Convert.ToInt16(iniFile.Read("Theme", "ApplicationSettings"));
-            //InitalWindow = Convert.ToInt16(iniFile.Read("InitalWindow", "ApplicationSettings"));
-            NumberOfKeys = Convert.ToUInt16(iniFile.Read("NumberOfKeys", "ApplicationSettings"));
+            try
+            {
+                var data = JsonSerializer.Deserialize<ApplicationData>(File.ReadAllText(Path.GetFullPath("data/Config.json")));
+                if (data != null)
+                    appData = data;
+            } catch { }
 
             base.OnStartup(e);
         }
+    }
+
+    public class ApplicationData
+    {
+        // The values that are set to filds below is the settings by default
+        public byte NumberOfKeys { get; set; } = 8;
+        public string Language { get; set; } = "EN";
+        public bool Cache { get; set; } = true; // Should I leave it?
+        public string InitialGroupName { get; set; } = "Main";
     }
 }

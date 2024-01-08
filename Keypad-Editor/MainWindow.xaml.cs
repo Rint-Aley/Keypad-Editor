@@ -11,25 +11,24 @@ namespace Keypad_Editor
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
-        MainWindowLogic logic;
+        private MainWindowLogic logic;
 
-        string? DontSelectedAnyButtons;
+        string DontSelectedAnyButtons = "";
 
         public MainWindow()
         {
             logic = new MainWindowLogic(this);
             InitializeComponent();
             //Localizate();
-            logic.ReadDataFromFile();
         }
 
         public void Localizate()
         {
             IniFile iniFile = new IniFile();
 
-            if (App.Language == "RU")
+            if (App.AppData.Language == "RU")
                 iniFile.Path = new FileInfo("Data\\locale\\RU.ini").FullName;
-            if (App.Language == "EN")
+            if (App.AppData.Language == "EN")
                 iniFile.Path = new FileInfo("Data\\locale\\EN.ini").FullName;
 
             Title.Text = iniFile.Read("MainWindow", "WindowTitles");
@@ -57,7 +56,7 @@ namespace Keypad_Editor
 
             DontSelectedAnyButtons = iniFile.Read("ErrorKeyIsNotSelected", "DeviceBlock");
         }
-        
+
         /// <summary>
         /// Close window.
         /// </summary>
