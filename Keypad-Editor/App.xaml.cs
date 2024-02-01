@@ -17,16 +17,16 @@ namespace Keypad_Editor
                 return appData;
             }
         }
-        protected override void OnStartup(StartupEventArgs e)
+
+        public App()
         {
             try
             {
                 var data = JsonSerializer.Deserialize<ApplicationData>(File.ReadAllText(Path.GetFullPath("data/Config.json")));
-                if (data != null)
+                if (data is not null)
                     appData = data;
-            } catch { }
-
-            base.OnStartup(e);
+            }
+            catch { }
         }
     }
 

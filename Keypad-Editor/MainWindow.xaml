@@ -63,27 +63,6 @@
             </Setter>
         </Style>
 
-        <!--// Back button //-->
-        <Style x:Key="Back" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource BackgroungColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <StackPanel Orientation="Horizontal" x:Name="BackButtonContent">
-                            <Image Source="Resources/BackImage.png"/>
-                            <ContentPresenter/>
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Foreground" Value="Wheat"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <!--// Device's buttons //-->
         <Style x:Key="DeviceKey" TargetType="ToggleButton">
             <EventSetter Event="Click" Handler="Key_Click"/>
@@ -419,142 +398,6 @@
             </Setter>
         </Style>
 
-        <!--// Device to change inital window to setting window //-->
-        <Style x:Key="DeviceKeyForChangeModButton" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Border Margin="0.5" BorderThickness="0.5" BorderBrush="Black"
-                                CornerRadius="1" x:Name="Key" Background="#FF333333">
-                            <Border BorderThickness="0.5" BorderBrush="Black"
-                                    CornerRadius="2"
-                                    Padding="6" Margin="3"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="ChangeMod" TargetType="Button">
-            <EventSetter Event="Click" Handler="BigDevice_Click"/>
-            <Setter Property="Background" Value="#FF36393F"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-
-                        <Viewbox Stretch="Uniform" Grid.Column="1"
-                                    Grid.Row="1">
-                            <Border x:Name="bord" BorderThickness="1"
-                                BorderBrush="#FF202225" Padding="2"
-                                CornerRadius="2" Background="{TemplateBinding Background}">
-                                <Border BorderBrush="Black" BorderThickness="0.5"
-                                        CornerRadius="2" Background="#FF4C4C4C">
-                                    <Grid Margin="0.5">
-                                        <Grid x:Name="KeypadInitWindowIcon"
-                                              Visibility="Visible">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <Button Grid.Column="0" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                        </Grid>
-                                        <Grid x:Name="NumpadInitWindowIcon"
-                                              Visibility="Collapsed">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                                <RowDefinition Height="*"/>
-                                            </Grid.RowDefinitions>
-                                            <Button Grid.Column="0" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="0"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="1"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="2"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="2"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="2"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="2" Grid.RowSpan="2"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="3"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="3"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="3"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="4"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="4"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="4"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="3" Grid.Row="4" Grid.RowSpan="2"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="0" Grid.Row="5"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="1" Grid.Row="5"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                            <Button Grid.Column="2" Grid.Row="5"
-                                                    Style="{StaticResource DeviceKeyForChangeModButton}"/>
-                                        </Grid>
-                                    </Grid>
-                                </Border>
-                            </Border>
-                        </Viewbox>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderBrush" Value="Black" TargetName="bord"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <!--// Style for tips //-->
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="Background" Value="{StaticResource BackgroungColor}"/>
@@ -587,50 +430,17 @@
         <!--// Top menu //-->
         <Grid Background="#202225" Grid.Row="0"
               x:Name="TopMenu" MouseDown="TopMenu_MouseDown">
-            <!--<Button Style="{StaticResource ToFullSizeButton}"/>-->
             <Button Style="{StaticResource CloseButton}" Click="Close_Click"
                     HorizontalAlignment="Right"/>
 
-            <TextBlock Name="Title" Text="Settings" HorizontalAlignment="Left"
+            <TextBlock  Name="Title" Text="Settings" HorizontalAlignment="Left"
                         VerticalAlignment="Center" FontSize="15px"
                         Margin="2" Foreground="{StaticResource TextColor}"/>
         </Grid>
-        
-        <!--// Inital window //-->
-        <Grid x:Name="BigDeviceGrid" Visibility="Hidden" Opacity="1"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
 
-            <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="3"
-                    Style="{StaticResource ChangeMod}"/>
-            <Button x:Name="SettingsButton"
-                    Grid.Column="2" Grid.Row="2"
-                    Height="20" Width="80"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    Margin="5"
-                    Click="SettingsButton_Click">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="SettingsButtonText"
-                               Text="Settings" Margin="0 0 5 0"/>
-                    <!--<Image Source="Resources/gear.png"/>-->
-                </StackPanel>
-            </Button>
-        </Grid>
-        
-        
         <!--// Settings window //-->
         <Grid x:Name="MainWindowGrid" Grid.Row="2"
-              Visibility="Visible" Opacity="1">
+              Opacity="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" MinWidth="266"/>
                 <ColumnDefinition Width ="Auto"/>
@@ -648,23 +458,12 @@
                           HorizontalAlignment="Center"
                           Background="#202225"/>
 
-            <Button x:Name="Back" Content="Back"
-                    Click="Back_Click"
-                    Grid.Column="0"
-                    Width="50" Height="18"
-                    Style="{StaticResource Back}"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Margin="10"/>
-
             <Button x:Name="ToCurrentSettings"
                     Grid.Column="0" VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Height="25" Width="130" Margin="5"
                     Content="To current settings"
                     Click="ToCurrentSettings_Click"/>
-
-
 
             <Button x:Name="Apply" Click="Apply_Click"
                     Visibility="Hidden"
@@ -679,7 +478,8 @@
                        Margin="5" Foreground="#FFA57171" FontSize="15"/>
 
             <!--// Left menu (with device) //-->
-            <Viewbox Stretch="Uniform" Margin="4 30">
+            <Viewbox Stretch="Uniform" Margin="4 30"
+                     MaxWidth="330">
                 <Border BorderBrush="Black" BorderThickness="0.5"
                         CornerRadius="2" Background="#FF4C4C4C">
                     <Grid x:Name="RadioButtonsOfDevice" Margin="0.5">
@@ -821,17 +621,15 @@
             <!--// Grids for actions //-->
             <Grid x:Name="OpenGrid" Visibility="Hidden"
                   Grid.Column="4">
-                
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="35px"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-
                 <TextBox x:Name="PathToFileOrWebsite"
                          Grid.Row="0"
                          Margin="5"/>
-
 
                 <Button x:Name="selectDirectory" Content="Select directory"
                         Click="selectDirectory_Click"

@@ -32,9 +32,7 @@ namespace Keypad_Editor
                 iniFile.Path = new FileInfo("Data\\locale\\EN.ini").FullName;
 
             Title.Text = iniFile.Read("MainWindow", "WindowTitles");
-            SettingsButtonText.Text = iniFile.Read("SettingsButton.Text", "DeviceBlock");
             ToCurrentSettings.Content = iniFile.Read("ToCurrentSettingsButton.Text", "DeviceBlock");
-            Back.Content = iniFile.Read("Back.Text", "DeviceBlock");
             open.Content = iniFile.Read("Opening", "ActivityButtons");
             type.Content = iniFile.Read("Typing", "ActivityButtons");
             pressCombination.Content = iniFile.Read("Combination", "ActivityButtons");
@@ -51,7 +49,6 @@ namespace Keypad_Editor
             DeleateGroupCombnations.ToolTip = iniFile.Read("DeleateGroupCombnations.ToolTip", "CombinationGrid");
             AddGroupCombimations.ToolTip = iniFile.Read("AddGroupCombimations.ToolTip", "CombinationGrid");
 
-            SettingsButton.Width = Convert.ToDouble(iniFile.Read("SettingsButton.Width", "DeviceBlock"));
             ToCurrentSettings.Width = Convert.ToDouble(iniFile.Read("ToCurrentSettingsButton.Width", "DeviceBlock"));
 
             DontSelectedAnyButtons = iniFile.Read("ErrorKeyIsNotSelected", "DeviceBlock");
@@ -76,17 +73,6 @@ namespace Keypad_Editor
             }
         }
 
-
-        /// <summary>
-        /// Changes subwindows
-        /// </summary>
-        private void BigDevice_Click(object sender, RoutedEventArgs e)
-        {
-            BigDeviceGrid.Visibility = Visibility.Hidden;
-            MainWindowGrid.Visibility = Visibility.Visible;
-            //Animation
-        }
-
         /// <summary>
         /// Sets commands to last saved state.
         /// </summary>
@@ -102,38 +88,6 @@ namespace Keypad_Editor
         {
             var selectedKeyTag = ((ToggleButton)sender).Tag;
             logic.ChangeKey(Convert.ToInt16(selectedKeyTag));
-        }
-
-        // Change the widow from the settings, to menu
-        // I think I will give it up
-        private void Back_Click(object sender, RoutedEventArgs e)
-        {
-            //if (selectedKey != 0) WriteNewValues();
-            //if(parametrNew.SequenceEqual(parametrInFile) == false || activityNew.SequenceEqual(activityInFile) == false)
-            //{
-            //    YesNoForm yesNo = new YesNoForm("Doesn't save changes", "Are you going to save changes?");
-            //    yesNo.ShowDialog();
-            //    //Если выбрано нет
-            //    if (!yesNo.Result)
-            //    {
-            //        Array.Copy(parametrInFile, parametrNew, parametrInFile.Length);
-            //        Array.Copy(activityInFile, activityNew, activityInFile.Length);
-            //    }
-            //    else
-            //        Apply_Click(Apply, null);
-                
-            //}
-            //BigDeviceGrid.Visibility = Visibility.Visible;
-            //MainWindowGrid.Visibility = Visibility.Hidden;
-            //selectedKey = 0;
-            //lastSelectedKey = 0;
-            ////Очищаем экран
-            //HideControls();
-            //DeleteActivity();
-            //foreach (System.Windows.Controls.RadioButton radioButton in RadioButtonsOfDevice.Children)
-            //{
-            //    radioButton.IsChecked = false;
-            //}
         }
 
         private void ActionButton_Click(object sender, RoutedEventArgs e)
@@ -196,19 +150,16 @@ namespace Keypad_Editor
             logic.ToThePreviousGroupOfCombination();
         }
 
-        //Переходит в следующую группу комбинаций
         private void ToNextGroupOfCombinationButton_Click(object sender, RoutedEventArgs e)
         {
             logic.ToTheNextGroupOfCombination();
         }
 
-        //Удаляет группу
         private void DeleateGroupCombinations_Click(object sender, RoutedEventArgs e)
         {
             logic.DeleteGropOfCombination();
         }
 
-        //Создаёт группу
         private void AddGroupCombinations_Click(object sender, RoutedEventArgs e)
         {
             logic.AddGropOfCombination();
@@ -230,8 +181,6 @@ namespace Keypad_Editor
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindow sw = new SettingsWindow();
-            //sw.Localizate += Localizate;
-            //sw.Owner = this;
             sw.Show();
         }
 
