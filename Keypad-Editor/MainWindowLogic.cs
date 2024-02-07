@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Text;
 
 namespace Keypad_Editor
 {
@@ -22,25 +23,19 @@ namespace Keypad_Editor
 
         // Group system
         private List<Group> Groups = []; // The list of all groups in settings file
-        private Group? currentGroup; // "Pointer" to the current group
+        private Group currentGroup; // "Pointer" to the current group
 
         // Cache system
-        bool cache = App.AppData.Cache;
-        private KeypadActions[] ActionsInFile = new KeypadActions[App.AppData.NumberOfKeys];
-        private string[] ParametrsInFile = new string[App.AppData.NumberOfKeys];
-        private KeypadActions[] newActions = new KeypadActions[App.AppData.NumberOfKeys];
-        private string[] newParametrs = new string[App.AppData.NumberOfKeys];
+        private KeypadActions[] ActionsInFile;
+        private string[] ParametrsInFile;
+        private KeypadActions[] newActions;
+        private string[] newParametrs;
 
         // Combination system
-        struct CombinationUnit
+        struct CombinationUnit(string keys, uint delay)
         {
-            public string keys;
-            public int delay;
-            public CombinationUnit(string keys, int delay)
-            {
-                this.keys = keys;
-                this.delay = delay;
-            }
+            public string keys = keys;
+            public uint delay = delay;
         }
 
         List<CombinationUnit> combination = [];
@@ -49,39 +44,27 @@ namespace Keypad_Editor
         public MainWindowLogic (MainWindow owner)
         {
             Window = owner;
-            ReadDataFromFile();
-        }
 
-        /// <summary>
-        /// Reads data about actions for device and fills arrays to get fast access to it.
-        /// </summary>
-        public void ReadDataFromFile()
-        {
-            Groups = new List<Group>(JsonReader.Read());
+            // Reading data from the file
+            try { Groups = new List<Group>(GroupsLogic.ReadFile()); }
+            catch
+            {
+                // File doesn't exist or has incompatible object format
+                // TODO: Error messege with offers to fix it
+            }
 
-            SwitchGroup(App.AppData.InitialGroupName);
-
-            if (currentGroup == null)
+            try { currentGroup = GroupsLogic.FindGroup(Groups, App.AppData.InitialGroupName); }
+            catch
             {
                 // There isn't inital group in file
                 // TODO: Window to choose new inital group from the avialable
+                currentGroup = new Group();
             }
 
-            // TODO: Check if array of actions have the same number of elements as in config file 
-            IntArrayToEmum(currentGroup.Actions, out ActionsInFile);
-            currentGroup.Parametrs?.CopyTo(ParametrsInFile, 0);
-            ActionsInFile.CopyTo(newActions, 0);
-            ParametrsInFile.CopyTo(newParametrs, 0);
-        }
+            GroupsLogic.ParseGroup(currentGroup, out ActionsInFile, out ParametrsInFile);
 
-        private void IntArrayToEmum(int[] intArr, out KeypadActions[] enumArr)
-        {
-            enumArr = new KeypadActions[8];
-            for (int i = 0; i < intArr.Length; i++)
-            {
-                enumArr[i] = (KeypadActions)intArr[i];
-            }
-
+            newActions = (KeypadActions[])ActionsInFile.Clone();
+            newParametrs = (string[])ParametrsInFile.Clone();
         }
 
         public void RetunToOldSettings()
@@ -102,7 +85,7 @@ namespace Keypad_Editor
             selectedKey = (byte)(newKey - 1);
             if(lastSelectedKey != selectedKey)
             {
-                if ((lastSelectedKey != KEY_DONT_SELECTED) & cache)
+                if ((lastSelectedKey != KEY_DONT_SELECTED) & App.AppData.Cache)
                     AddDataToCache();
                 else if (lastSelectedKey == KEY_DONT_SELECTED)
                     Window.Apply.Visibility = Visibility.Visible;
@@ -128,13 +111,13 @@ namespace Keypad_Editor
 
                 case KeypadActions.pressCombination:
                     SaveCombinationUnit();
-                    string param = "";
+                    StringBuilder param = new StringBuilder();
                     for (int i = 0; i < combination.Count; i++)
                     {
-                        param += combination[i].keys.Replace(' ', '|') + " ";
-                        param += combination[i].delay + " ";
+                        param.Append(combination[i].keys.Replace(' ', '|') + " ");
+                        param.Append(combination[i].delay + " ");
                     }
-                    newParametrs[lastSelectedKey] = param.Remove(param.Length - 1);
+                    newParametrs[lastSelectedKey] = param.Remove(param.Length - 1, 1).ToString();
                     break;
             }
         }
@@ -173,7 +156,7 @@ namespace Keypad_Editor
                 Window.KeysTextBlock.Text = "";
                 Window.DelayTextBlock.Text = "0";
                 Window.DeleateGroupCombnations.IsEnabled = false;
-                combination = new List<CombinationUnit> { new CombinationUnit("", 0) };
+                combination = [new CombinationUnit("", 0)];
             }
         }
 
@@ -213,7 +196,7 @@ namespace Keypad_Editor
                             combination.Add(new CombinationUnit()
                             {
                                 keys = parts[i].Replace('|', ' '),
-                                delay = Convert.ToInt32(parts[i + 1])
+                                delay = Convert.ToUInt32(parts[i + 1])
                             });
                         }
                         // The last one elements will be added here (if it's necessary)
@@ -254,13 +237,13 @@ namespace Keypad_Editor
         public void DeleateKeyFromCombination()
         {
             var keys = Window.KeysTextBlock.Text.Split(' ');
-            var text = "";
+            StringBuilder text = new StringBuilder(Window.KeysTextBlock.Text.Length);
             // (keys.Length - 2) because the last one element is empty string
             for (int i = 0; i < keys.Length - 2; i++)
             {
-                text += keys[i] + ' ';
+                text.Append(keys[i] + ' ');
             }
-            Window.KeysTextBlock.Text = text;
+            Window.KeysTextBlock.Text = text.ToString();
         }
 
         /// <summary>
@@ -351,7 +334,7 @@ namespace Keypad_Editor
 
             combination[currentCombination - 1] = new CombinationUnit(
                 keys,
-                Convert.ToInt32(Window.DelayTextBlock.Text)
+                Convert.ToUInt32(Window.DelayTextBlock.Text)
                 );
         }
 
@@ -368,28 +351,10 @@ namespace Keypad_Editor
             newActions.CopyTo(ActionsInFile, 0);
             newParametrs.CopyTo(ParametrsInFile, 0);
 
-            Group newGroup = new() {
-                Name = currentGroup?.Name,
-                Actions = ActionsInFile.Select(i => (int)i).ToArray(),
-                Parametrs = ParametrsInFile
-            };
-            Groups.Remove(currentGroup);
-            Groups.Add(newGroup);
+            currentGroup.Actions = ActionsInFile.Select(i => (int)i).ToArray();
+            currentGroup.Parametrs = ParametrsInFile;
 
-            JsonReader.Write(Groups);
-        }
-
-        private void SwitchGroup(string name)
-        {
-            foreach (var group in Groups)
-            {
-                if (group.Name == name)
-                {
-                    currentGroup = group;
-                }
-            }
-            // TODO: Perhaps I should to add a handler if currentGroup is null
-            //TODO: clear window
+            GroupsLogic.WriteToFile(Groups);
         }
     }
 }

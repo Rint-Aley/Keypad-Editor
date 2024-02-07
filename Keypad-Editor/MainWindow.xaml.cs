@@ -9,9 +9,9 @@ namespace Keypad_Editor
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : System.Windows.Window
+    public partial class MainWindow : Window
     {
-        private MainWindowLogic logic;
+        private readonly MainWindowLogic logic;
 
         string DontSelectedAnyButtons = "";
 
@@ -31,7 +31,7 @@ namespace Keypad_Editor
             if (App.AppData.Language == "EN")
                 iniFile.Path = new FileInfo("Data\\locale\\EN.ini").FullName;
 
-            Title.Text = iniFile.Read("MainWindow", "WindowTitles");
+            TitleText.Text = iniFile.Read("MainWindow", "WindowTitles");
             ToCurrentSettings.Content = iniFile.Read("ToCurrentSettingsButton.Text", "DeviceBlock");
             open.Content = iniFile.Read("Opening", "ActivityButtons");
             type.Content = iniFile.Read("Typing", "ActivityButtons");
@@ -69,7 +69,7 @@ namespace Keypad_Editor
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                this.DragMove();
+                DragMove();
             }
         }
 
@@ -123,7 +123,7 @@ namespace Keypad_Editor
         }
 
         // Opens menu to choose the path to the file or to the folder
-        private void selectDirectory_Click(object sender, RoutedEventArgs e)
+        private void SelectDirectory_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             

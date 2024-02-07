@@ -13,7 +13,6 @@
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip">
-    <!--Visibility="Hidden">  -->
     <Window.Resources>
         <!--// Style for text box //-->
         <Style TargetType="{x:Type TextBox}">
@@ -408,7 +407,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Visibility="Visible" >
+    <Grid>
         <Grid.Resources>
             <Storyboard x:Key="SwitchOffGrid">
                 <DoubleAnimation Storyboard.TargetProperty="Opacity"
@@ -433,7 +432,7 @@
             <Button Style="{StaticResource CloseButton}" Click="Close_Click"
                     HorizontalAlignment="Right"/>
 
-            <TextBlock  Name="Title" Text="Settings" HorizontalAlignment="Left"
+            <TextBlock  Name="TitleText" Text="Settings" HorizontalAlignment="Left"
                         VerticalAlignment="Center" FontSize="15px"
                         Margin="2" Foreground="{StaticResource TextColor}"/>
         </Grid>
@@ -632,7 +631,7 @@
                          Margin="5"/>
 
                 <Button x:Name="selectDirectory" Content="Select directory"
-                        Click="selectDirectory_Click"
+                        Click="SelectDirectory_Click"
                         Grid.Row="1"
                         Height="25px" Width="100px"
                         Margin="10" HorizontalAlignment="Right"
